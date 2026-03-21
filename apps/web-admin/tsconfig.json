@@ -3,6 +3,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "rootDir": "../../",
     "paths": {
       "@logiflow/shared-models": ["../../shared/models/src/index.ts"],
       "@logiflow/shared-socket": ["../../shared/socket/src/index.ts"],
@@ -30,7 +31,7 @@
     ],
     "skipLibCheck": true,
     "useDefineForClassFields": false,
-    "types": ["google.maps"]
+    "types": ["google.maps", "jasmine"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
