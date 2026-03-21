@@ -1,0 +1,17 @@
+<div class="log-header">
+  <span class="section-label">Eventos en tiempo real</span>
+</div>
+
+<div class="log-container">
+  <div
+    *ngFor="let entry of entries"
+    class="log-entry"
+  >
+    <span class="log-time">{{ entry.time }}</span>
+    <span class="log-message" [ngClass]="'log-' + entry.type">{{ entry.message }}</span>
+  </div>
+
+  <div *ngIf="entries.length === 0" class="log-entry">
+    <span class="log-message log-system">Esperando eventos...</span>
+  </div>
+</div>
