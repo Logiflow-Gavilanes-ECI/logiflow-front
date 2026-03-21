@@ -1,0 +1,14 @@
+<div class="map-wrapper">
+  <div #mapContainer class="map-canvas"></div>
+
+  <button class="btn-reset" (click)="resetMapView()">&#8862; Vista general</button>
+
+  <div class="route-toast" *ngIf="toastVisible && toastData">
+    <div class="toast-title">Nueva ruta recibida</div>
+    <div class="toast-row">Vehículo  <span>{{ toastData.vehicleId }}</span></div>
+    <div class="toast-row">Paradas   <span>{{ toastData.stops }}</span></div>
+    <div class="toast-row">Tiempo    <span>{{ toastData.eta !== null ? toastData.eta + ' min' : '--' }}</span></div>
+    <div class="toast-row">Distancia <span>{{ toastData.distance !== null ? (toastData.distance / 1000 | number:'1.1-1') + ' km' : '--' }}</span></div>
+    <div class="toast-row">Evento    <span>{{ toastData.eventType || '--' }}</span></div>
+  </div>
+</div>
