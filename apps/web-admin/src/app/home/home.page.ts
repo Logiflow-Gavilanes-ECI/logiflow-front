@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MapComponent } from '../map/map.component';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +8,9 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class HomePage {
+  @ViewChild('mapRef') mapComponent!: MapComponent;
 
-  constructor() {}
-
+  onVehicleClicked(vehicleId: string): void {
+    this.mapComponent?.focusVehicle(vehicleId);
+  }
 }

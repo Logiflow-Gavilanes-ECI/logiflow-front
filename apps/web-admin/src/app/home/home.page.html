@@ -1,9 +1,20 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>LogiFlow — Centro de Control</ion-title>
+    <ion-title>
+      <span class="logo-text">Logi<span class="logo-accent">Flow</span></span>
+      &mdash; Centro de Control
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <app-map></app-map>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <app-vehicle-list (vehicleClicked)="onVehicleClicked($event)"></app-vehicle-list>
+      <app-event-log></app-event-log>
+    </aside>
+    <main class="map-area">
+      <app-map #mapRef></app-map>
+    </main>
+  </div>
 </ion-content>

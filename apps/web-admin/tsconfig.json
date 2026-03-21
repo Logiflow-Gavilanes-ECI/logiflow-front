@@ -29,7 +29,8 @@
       "dom"
     ],
     "skipLibCheck": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "types": ["google.maps"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

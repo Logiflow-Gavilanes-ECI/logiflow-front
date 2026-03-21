@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
 import { MapComponent } from '../map/map.component';
+import { VehicleListComponent } from '../vehicle-list/vehicle-list.component';
+import { EventLogComponent } from '../event-log/event-log.component';
 
 @NgModule({
   imports: [
@@ -13,6 +15,6 @@ import { MapComponent } from '../map/map.component';
     IonicModule,
     HomePageRoutingModule,
   ],
-  declarations: [HomePage, MapComponent],
+  declarations: [HomePage, MapComponent, VehicleListComponent, EventLogComponent],
 })
 export class HomePageModule {}
