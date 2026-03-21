@@ -1,14 +1,40 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
-  "extends": "../../tsconfig.base.json",
+  "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
+    "baseUrl": "./",
+    "paths": {
+      "@logiflow/shared-models": ["../../shared/models/src/index.ts"],
+      "@logiflow/shared-socket": ["../../shared/socket/src/index.ts"],
+      "@logiflow/shared-auth": ["../../shared/auth/src/index.ts"],
+      "@logiflow/shared-maps": ["../../shared/maps/src/index.ts"]
+    },
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2022",
+    "module": "es2020",
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "skipLibCheck": true,
+    "useDefineForClassFields": false
   },
-  "references": [
-    { "path": "../../shared/models" },
-    { "path": "../../shared/auth" },
-    { "path": "../../shared/maps" },
-    { "path": "../../shared/socket" }
-  ],
-  "include": ["src/**/*"]
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
 }

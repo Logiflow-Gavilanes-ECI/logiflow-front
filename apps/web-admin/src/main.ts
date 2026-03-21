@@ -1,11 +1,6 @@
-import { createDispatcherRuntime } from './app/core/runtime';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-const socketUrl =
-  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
-    ?.LOGIFLOW_SOCKET_URL ?? 'http://localhost:3001';
+import { AppModule } from './app/app.module';
 
-const runtime = createDispatcherRuntime({
-  socketUrl,
-});
-
-runtime.start();
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.log(err));
