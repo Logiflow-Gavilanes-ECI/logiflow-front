@@ -61,6 +61,7 @@ export class RoutePage implements AfterViewInit {
   private mapInstance: google.maps.Map | null = null;
   private routePolyline: google.maps.Polyline | null = null;
   private currentRoute: DriverRoute | null = null;
+  private markerBounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   ionViewWillEnter(): void {
     void this.loadAndRenderRoute();
@@ -71,7 +72,13 @@ export class RoutePage implements AfterViewInit {
   }
 
   centerMapOnStop(step: RouteStep): void {
-    void step;
+    if (!this.mapInstance) {
+      return;
+    }
+
+    this.mapInstance.panTo({ lat: step.lat, lng: step.lng });
+    this.mapInstance.setZoom(RoutePageConstants.SelectedStopZoom);
+    this.animateStopMarker(step.stopId);
   }
 
   getStatusLabel(step: RouteStep): string {
@@ -196,6 +203,25 @@ export class RoutePage implements AfterViewInit {
     this.routePolyline.setMap(null);
     this.routePolyline = null;
   }
+
+  private animateStopMarker(stopId: string): void {
+    const marker = this.markerByStopId.get(stopId);
+    if (!marker) {
+      return;
+    }
+
+    if (this.markerBounceTimeoutId !== null) {
+      clearTimeout(this.markerBounceTimeoutId);
+      this.markerBounceTimeoutId = null;
+    }
+
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    this.markerBounceTimeoutId = setTimeout(
+      stopMarkerBounceAnimation,
+      RoutePageConstants.MarkerBounceDurationMs,
+      marker,
+    );
+  }
 }
 
 function compareRouteStepsByArrivalOrder(left: RouteStep, right: RouteStep): number {
@@ -204,4 +230,8 @@ function compareRouteStepsByArrivalOrder(left: RouteStep, right: RouteStep): num
 
 function mapStepToLatLngLiteral(step: RouteStep): google.maps.LatLngLiteral {
   return { lat: step.lat, lng: step.lng };
+}
+
+function stopMarkerBounceAnimation(marker: google.maps.Marker): void {
+  marker.setAnimation(null);
 }

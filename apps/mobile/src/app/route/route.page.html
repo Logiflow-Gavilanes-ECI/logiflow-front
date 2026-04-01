@@ -11,7 +11,13 @@
 
   <div class="stop-list-wrapper">
     <ion-list>
-      <ion-item detail="false" *ngFor="let step of routeSteps">
+      <ion-item
+        detail="false"
+        button="true"
+        *ngFor="let step of routeSteps"
+        (click)="centerMapOnStop(step)"
+        (keydown.enter)="centerMapOnStop(step)"
+        (keydown.space)="centerMapOnStop(step)">
         <ion-badge
           slot="start"
           class="arrival-badge"

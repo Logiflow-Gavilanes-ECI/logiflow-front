@@ -2,6 +2,8 @@ import { ROUTE_STEP_STATUS, type RouteStepStatus } from '@logiflow/shared-models
 
 export const RoutePageConstants = {
   DefaultZoom: 13,
+  SelectedStopZoom: 15,
+  MarkerBounceDurationMs: 1400,
   MapHeightVh: 55,
   ListHeightVh: 45,
   PolylineStrokeColor: '#229ED9',
