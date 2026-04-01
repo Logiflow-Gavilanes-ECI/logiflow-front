@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
-import { AuthTokenService, type JwtClaims } from '@logiflow/shared-auth';
+import { AuthTokenService } from '@logiflow/shared-auth';
 import {
   ROUTE_STEP_STATUS,
   type DriverRoute,
   type RouteStep,
 } from '@logiflow/shared-models';
-import { io, type Socket } from 'socket.io-client';
-import { environment } from '../../../environments/environment';
 import {
   SocketConnectionConstants,
   SocketEventConstants,
-} from '../constants/socket.constants';
-import { RouteJwtClaimConstants } from '../../route/route.constants';
+} from '@logiflow/shared-socket';
+import { io, type Socket } from 'socket.io-client';
+import { environment } from '../../../environments/environment';
 import { Observable, Subject } from 'rxjs';
 import { type TripStatus } from '../constants/trip-status.constants';
 
@@ -52,7 +51,7 @@ export class DriverSocketService {
     this.handleRouteUpdateEvent = this.handleRouteUpdateEvent.bind(this);
   }
 
-  connect(vehicleId?: string): void {
+  connect(vehicleId: string): void {
     if (this.socket?.connected) {
       return;
     }
@@ -63,14 +62,12 @@ export class DriverSocketService {
       return;
     }
 
-    const claims = this.authTokenService.decodeClaims() ?? {};
-    const resolvedVehicleId = this.resolveVehicleId(vehicleId, claims);
-    if (!resolvedVehicleId) {
-      this.errorSubject.next('Vehicle id is missing in JWT claims.');
+    if (typeof vehicleId !== 'string' || vehicleId.trim().length === 0) {
+      this.errorSubject.next('Vehicle id is required to join vehicle room.');
       return;
     }
 
-    this.activeVehicleId = resolvedVehicleId;
+    this.activeVehicleId = vehicleId.trim();
     this.socket = io(environment.socketBaseUrl, {
       autoConnect: false,
       auth: { [SocketConnectionConstants.authTokenKey]: token },
@@ -165,22 +162,6 @@ export class DriverSocketService {
     this.routeUpdateSubject.next(normalizedRoute);
   }
 
-  private resolveVehicleId(explicitVehicleId: string | undefined, claims: JwtClaims): string | null {
-    if (typeof explicitVehicleId === 'string' && explicitVehicleId.trim().length > 0) {
-      return explicitVehicleId;
-    }
-
-    const claimVehicleId = claims[RouteJwtClaimConstants.VehicleId];
-    if (typeof claimVehicleId === 'string' && claimVehicleId.trim().length > 0) {
-      return claimVehicleId;
-    }
-
-    if (typeof claims.sub === 'string' && claims.sub.trim().length > 0) {
-      return claims.sub;
-    }
-
-    return null;
-  }
 }
 
 function normalizeRouteUpdatePayload(

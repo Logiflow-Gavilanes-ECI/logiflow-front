@@ -8,7 +8,7 @@ import {
 } from '@logiflow/shared-models';
 import { AuthTokenService, type JwtClaims } from '@logiflow/shared-auth';
 import { environment } from '../../../environments/environment';
-import { RouteApiConstants, RouteJwtClaimConstants } from '../../route/route.constants';
+import { RouteApiConstants } from '../../route/route.constants';
 
 interface DriverRouteApiResponse {
   vehicleId?: string;
@@ -50,16 +50,15 @@ export class RouteService {
   }
 
   private resolveVehicleId(claims: JwtClaims): string {
-    const claimVehicleId = claims[RouteJwtClaimConstants.VehicleId];
-    if (typeof claimVehicleId === 'string' && claimVehicleId.trim().length > 0) {
-      return claimVehicleId;
-    }
-
     if (typeof claims.sub === 'string' && claims.sub.trim().length > 0) {
       return claims.sub;
     }
 
-    throw new Error('Vehicle id is missing in JWT claims.');
+    if (typeof claims.username === 'string' && claims.username.trim().length > 0) {
+      return claims.username;
+    }
+
+    throw new Error('Route lookup id is missing in JWT claims.');
   }
 
   private buildDriverRoutePath(vehicleId: string): string {

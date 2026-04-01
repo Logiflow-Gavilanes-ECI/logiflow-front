@@ -32,7 +32,3 @@ export const RouteStatusLabelConstants: Record<RouteStepStatus, string> = {
 export const RouteApiConstants = {
   DriverRoutePathTemplate: '/vehicles/{vehicleId}/route',
 } as const;
-
-export const RouteJwtClaimConstants = {
-  VehicleId: 'vehicleId',
-} as const;

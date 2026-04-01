@@ -1,13 +1,39 @@
 import { io, type Socket } from 'socket.io-client';
 
+export const SocketEventConstants = {
+  joinFleet: 'join:fleet',
+  joinRoom: 'join:vehicle',
+  joined: 'joined',
+  vehiclePosition: 'vehicle:position',
+  vehicleOffline: 'vehicle:offline',
+  vehicleOnline: 'vehicle:online',
+  routeUpdate: 'route:update',
+  vehicleStatus: 'vehicle:status',
+} as const;
+
+export const SocketRoomConstants = {
+  vehiclePrefix: 'vehicle:',
+} as const;
+
+export const SocketConnectionConstants = {
+  authTokenKey: 'token',
+  connectErrorEvent: 'connect_error',
+  authErrorCode: 'AUTH_ERROR',
+  disconnectReasonAuth: 'io server disconnect',
+} as const;
+
+export function buildVehicleRoomName(vehicleId: string): string {
+  return `${SocketRoomConstants.vehiclePrefix}${vehicleId}`;
+}
+
 const SOCKET_EVENTS = {
-  JoinFleet: 'join:fleet',
-  JoinVehicle: 'join:vehicle',
-  Joined: 'joined',
-  VehiclePosition: 'vehicle:position',
-  VehicleOffline: 'vehicle:offline',
-  VehicleOnline: 'vehicle:online',
-  RouteUpdate: 'route:update',
+  JoinFleet: SocketEventConstants.joinFleet,
+  JoinVehicle: SocketEventConstants.joinRoom,
+  Joined: SocketEventConstants.joined,
+  VehiclePosition: SocketEventConstants.vehiclePosition,
+  VehicleOffline: SocketEventConstants.vehicleOffline,
+  VehicleOnline: SocketEventConstants.vehicleOnline,
+  RouteUpdate: SocketEventConstants.routeUpdate,
 } as const;
 
 export interface JoinRoomAck {
