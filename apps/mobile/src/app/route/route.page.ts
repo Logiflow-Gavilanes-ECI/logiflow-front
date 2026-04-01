@@ -18,11 +18,14 @@ import {
   IonList,
   IonNote,
   IonTitle,
+  ToastController,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MapsService } from '@logiflow/shared-maps';
 import { type DriverRoute, type RouteStep } from '@logiflow/shared-models';
 import { RouteService } from '../core/services/route.service';
+import { DriverSocketService } from '../core/services/driver-socket.service';
 import {
   MarkerColorConstants,
   MapStyleConstants,
@@ -62,12 +65,18 @@ export class RoutePage implements AfterViewInit {
 
   private readonly routeService = inject(RouteService);
   private readonly mapsService = inject(MapsService);
+  private readonly driverSocketService = inject(DriverSocketService);
+  private readonly toastController = inject(ToastController);
 
   private readonly markerByStopId = new Map<string, google.maps.Marker>();
   private mapInstance: google.maps.Map | null = null;
   private routePolyline: google.maps.Polyline | null = null;
   private currentRoute: DriverRoute | null = null;
   private markerBounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    this.subscribeToSocketRouteUpdates();
+  }
 
   ionViewWillEnter(): void {
     void this.loadAndRenderRoute();
@@ -121,11 +130,40 @@ export class RoutePage implements AfterViewInit {
     try {
       const route = await this.loadDriverRoute();
       this.updateRouteState(route);
+      this.driverSocketService.connect(route.vehicleId);
       this.renderRoute();
     } catch {
       this.updateRouteState({ vehicleId: '', steps: [] });
       this.renderRoute();
     }
+  }
+
+  private subscribeToSocketRouteUpdates(): void {
+    this.driverSocketService.routeUpdate$
+      .pipe(takeUntilDestroyed())
+      .subscribe(this.handleIncomingRouteUpdate.bind(this));
+  }
+
+  private async handleIncomingRouteUpdate(newRoute: DriverRoute): Promise<void> {
+    await this.showRouteUpdateToast();
+    this.applyRouteUpdate(newRoute);
+  }
+
+  private applyRouteUpdate(newRoute: DriverRoute): void {
+    this.updateRouteState(newRoute);
+    this.renderRoute();
+  }
+
+  private async showRouteUpdateToast(): Promise<void> {
+    const toast = await this.toastController.create({
+      message: 'Your route has been updated by the dispatcher.',
+      duration: 3000,
+      position: 'top',
+      color: 'primary',
+      buttons: [{ text: 'View', role: 'info' }],
+    });
+
+    await toast.present();
   }
 
   private updateRouteState(route: DriverRoute): void {
