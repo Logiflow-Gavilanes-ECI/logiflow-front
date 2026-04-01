@@ -35,6 +35,22 @@ import {
 import { mergeRouteUpdate } from './route.utils';
 import { environment } from '../../environments/environment';
 import { NavIconConstants, StatusIconConstants } from '../core/constants/icons.constants';
+import {
+  TripStatusDisplayConstants,
+  type TripStatus,
+} from '../core/constants/trip-status.constants';
+
+interface RouteStatusDisplay {
+  label: string;
+  color: string;
+  icon: string;
+}
+
+const NeutralRouteStatusDisplay: RouteStatusDisplay = {
+  label: 'Ruta asignada',
+  color: 'medium',
+  icon: NavIconConstants.route,
+};
 
 @Component({
   selector: 'logiflow-route-page',
@@ -63,6 +79,7 @@ export class RoutePage implements AfterViewInit {
 
   readonly routeSteps: RouteStep[] = [];
   readonly routeIconName = NavIconConstants.route;
+  currentStatus: TripStatus | null = null;
 
   private readonly routeService = inject(RouteService);
   private readonly mapsService = inject(MapsService);
@@ -115,6 +132,14 @@ export class RoutePage implements AfterViewInit {
     }
 
     return StatusIconConstants.pending;
+  }
+
+  get currentStatusDisplay(): RouteStatusDisplay {
+    if (!this.currentStatus) {
+      return NeutralRouteStatusDisplay;
+    }
+
+    return TripStatusDisplayConstants[this.currentStatus];
   }
 
   private async loadDriverRoute(): Promise<DriverRoute> {

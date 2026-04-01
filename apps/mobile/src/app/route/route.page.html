@@ -8,6 +8,11 @@
 </ion-header>
 
 <ion-content class="route-content" [fullscreen]="true">
+  <ion-toolbar [color]="currentStatusDisplay.color">
+    <ion-icon [name]="currentStatusDisplay.icon" slot="start"></ion-icon>
+    <ion-title>{{ currentStatusDisplay.label }}</ion-title>
+  </ion-toolbar>
+
   <div class="map-wrapper">
     <div id="map" #mapContainer class="map-container"></div>
   </div>
