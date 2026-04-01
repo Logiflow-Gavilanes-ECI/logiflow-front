@@ -4,8 +4,14 @@
 
 export const environment = {
   production: false,
+<<<<<<< HEAD
   googleMapsApiKey: '',
   realtimeUrl: '',
+=======
+  realtimeUrl: 'http://localhost:3001',
+  googleMapsApiKey: '',
+  apiUrl: 'http://localhost:3002/api/v1',
+>>>>>>> e2a8220 (feat(frontend): add loading skeletons for vehicle list and map content #307)
 };
 
 /*
