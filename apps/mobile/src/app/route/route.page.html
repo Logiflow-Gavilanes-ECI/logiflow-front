@@ -8,4 +8,25 @@
   <div class="map-wrapper">
     <div id="map" #mapContainer class="map-container"></div>
   </div>
+
+  <div class="stop-list-wrapper">
+    <ion-list>
+      <ion-item detail="false" *ngFor="let step of routeSteps">
+        <ion-badge
+          slot="start"
+          class="arrival-badge"
+          [style.background-color]="getStatusColor(step)">
+          {{ step.arrivalOrder }}
+        </ion-badge>
+
+        <ion-label>
+          {{ step.address }}
+        </ion-label>
+
+        <ion-chip slot="end" [style.background-color]="getStatusColor(step)">
+          <ion-label>{{ getStatusLabel(step) }}</ion-label>
+        </ion-chip>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>

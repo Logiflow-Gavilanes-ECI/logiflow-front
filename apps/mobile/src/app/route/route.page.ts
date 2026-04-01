@@ -25,6 +25,7 @@ import {
   MarkerColorConstants,
   MapStyleConstants,
   RoutePageConstants,
+  RouteStatusLabelConstants,
 } from './route.constants';
 import { environment } from '../../environments/environment';
 
@@ -71,6 +72,14 @@ export class RoutePage implements AfterViewInit {
 
   centerMapOnStop(step: RouteStep): void {
     void step;
+  }
+
+  getStatusLabel(step: RouteStep): string {
+    return RouteStatusLabelConstants[step.status];
+  }
+
+  getStatusColor(step: RouteStep): string {
+    return MarkerColorConstants[step.status];
   }
 
   private async loadDriverRoute(): Promise<DriverRoute> {
