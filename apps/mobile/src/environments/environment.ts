@@ -2,6 +2,6 @@ export const environment = {
   production: false,
   apiBaseUrl: 'http://localhost:3002/api/v1',
   socketBaseUrl: 'http://localhost:3001',
-  // TODO: add key to local .env before demo.
+  // Google Maps API key must be provided from local environment configuration.
   googleMapsApiKey: '',
 } as const;
