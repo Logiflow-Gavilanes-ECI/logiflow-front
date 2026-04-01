@@ -102,7 +102,7 @@ export class DriverSocketService {
   }
 
   emitStatusUpdate(vehicleId: string, status: TripStatus, stopId: string | null): void {
-    if (!this.socket || !this.socket.connected) {
+    if (!this.socket?.connected) {
       this.errorSubject.next('Socket is not connected. Unable to emit status update.');
       return;
     }

@@ -37,6 +37,7 @@ import { environment } from '../../environments/environment';
 import { NavIconConstants, StatusIconConstants } from '../core/constants/icons.constants';
 import {
   TripStatusDisplayConstants,
+  TripStatusConstants,
   type TripStatus,
 } from '../core/constants/trip-status.constants';
 import { TripStatusComponent } from '../shared/components/trip-status/trip-status.component';
@@ -130,6 +131,10 @@ export class RoutePage implements AfterViewInit {
       newStatus,
       activeStop?.stopId ?? null,
     );
+
+    if (newStatus === TripStatusConstants.entregado) {
+      this.advanceActiveStopToNext();
+    }
   }
 
   getStatusLabel(step: RouteStep): string {
@@ -353,6 +358,38 @@ export class RoutePage implements AfterViewInit {
   private getActiveStop(): RouteStep | undefined {
     return this.routeSteps.find(isActiveRouteStep);
   }
+
+  private advanceActiveStopToNext(): void {
+    const sortedSteps = [...this.routeSteps].sort(compareRouteStepsByArrivalOrder);
+    const activeIndex = sortedSteps.findIndex(isActiveRouteStep);
+
+    if (activeIndex < 0) {
+      return;
+    }
+
+    const activeStop = sortedSteps[activeIndex];
+    const nextStep = sortedSteps.slice(activeIndex + 1).find(isPendingRouteStep);
+
+    const updatedSteps = sortedSteps.map((step) => {
+      if (step.stopId === activeStop.stopId) {
+        return { ...step, status: 'completed' as const };
+      }
+
+      if (step.stopId === nextStep?.stopId) {
+        return { ...step, status: 'active' as const };
+      }
+
+      return step;
+    });
+
+    this.currentRoute = {
+      vehicleId: this.currentRoute?.vehicleId ?? '',
+      steps: updatedSteps,
+    };
+
+    this.routeSteps.splice(0, this.routeSteps.length, ...updatedSteps);
+    this.renderRoute();
+  }
 }
 
 function compareRouteStepsByArrivalOrder(left: RouteStep, right: RouteStep): number {
@@ -369,4 +406,8 @@ function stopMarkerBounceAnimation(marker: google.maps.Marker): void {
 
 function isActiveRouteStep(step: RouteStep): boolean {
   return step.status === 'active';
+}
+
+function isPendingRouteStep(step: RouteStep): boolean {
+  return step.status === 'pending';
 }
