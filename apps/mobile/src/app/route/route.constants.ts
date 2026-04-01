@@ -24,9 +24,9 @@ export const MarkerColorConstants: Record<RouteStepStatus, string> = {
 } as const;
 
 export const RouteStatusLabelConstants: Record<RouteStepStatus, string> = {
-  [ROUTE_STEP_STATUS.Pending]: 'Pending',
-  [ROUTE_STEP_STATUS.Active]: 'Active',
-  [ROUTE_STEP_STATUS.Completed]: 'Completed',
+  [ROUTE_STEP_STATUS.Pending]: 'Pendiente',
+  [ROUTE_STEP_STATUS.Active]: 'Activo',
+  [ROUTE_STEP_STATUS.Completed]: 'Entregado',
 } as const;
 
 export const RouteApiConstants = {

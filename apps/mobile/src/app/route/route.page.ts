@@ -152,6 +152,14 @@ export class RoutePage implements AfterViewInit {
     return StatusIconConstants.pending;
   }
 
+  isCompletedStep(step: RouteStep): boolean {
+    return step.status === 'completed';
+  }
+
+  isActiveStep(step: RouteStep): boolean {
+    return step.status === 'active';
+  }
+
   get currentStatusDisplay(): RouteStatusDisplay {
     if (!this.currentStatus) {
       return NeutralRouteStatusDisplay;

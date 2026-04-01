@@ -27,6 +27,8 @@
     <ion-list>
       <ion-item
         class="stop-item"
+        [class.stop-item-active]="isActiveStep(step)"
+        [color]="isCompletedStep(step) ? 'light' : undefined"
         detail="false"
         button="true"
         *ngFor="let step of routeSteps"
@@ -42,7 +44,10 @@
 
         <ion-note class="stop-address">{{ step.address }}</ion-note>
 
-        <ion-chip slot="end" [style.background-color]="getStatusColor(step)">
+        <ion-chip
+          slot="end"
+          [style.background-color]="getStatusColor(step)"
+          [class.stop-badge-pulse]="isActiveStep(step)">
           <ion-icon [name]="getStatusIcon(step)"></ion-icon>
           <ion-label>{{ getStatusLabel(step) }}</ion-label>
         </ion-chip>
