@@ -58,6 +58,7 @@ export class RoutePage implements AfterViewInit {
 
   private readonly markerByStopId = new Map<string, google.maps.Marker>();
   private mapInstance: google.maps.Map | null = null;
+  private routePolyline: google.maps.Polyline | null = null;
   private currentRoute: DriverRoute | null = null;
 
   ionViewWillEnter(): void {
@@ -128,7 +129,9 @@ export class RoutePage implements AfterViewInit {
     this.mapInstance.setZoom(RoutePageConstants.DefaultZoom);
 
     this.clearMarkers();
+    this.clearRoutePolyline();
     this.renderMarkers(this.currentRoute.steps);
+    this.renderOrderedPolyline(this.currentRoute.steps);
   }
 
   private renderMarkers(steps: RouteStep[]): void {
@@ -162,8 +165,34 @@ export class RoutePage implements AfterViewInit {
 
     this.markerByStopId.clear();
   }
+
+  private renderOrderedPolyline(steps: RouteStep[]): void {
+    const sortedSteps = [...steps].sort(compareRouteStepsByArrivalOrder);
+    const routePath = sortedSteps.map(mapStepToLatLngLiteral);
+
+    this.routePolyline = new google.maps.Polyline({
+      map: this.mapInstance,
+      path: routePath,
+      strokeColor: RoutePageConstants.PolylineStrokeColor,
+      strokeOpacity: RoutePageConstants.PolylineStrokeOpacity,
+      strokeWeight: RoutePageConstants.PolylineStrokeWeight,
+    });
+  }
+
+  private clearRoutePolyline(): void {
+    if (!this.routePolyline) {
+      return;
+    }
+
+    this.routePolyline.setMap(null);
+    this.routePolyline = null;
+  }
 }
 
 function compareRouteStepsByArrivalOrder(left: RouteStep, right: RouteStep): number {
   return left.arrivalOrder - right.arrivalOrder;
+}
+
+function mapStepToLatLngLiteral(step: RouteStep): google.maps.LatLngLiteral {
+  return { lat: step.lat, lng: step.lng };
 }

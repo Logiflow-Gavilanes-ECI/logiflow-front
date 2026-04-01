@@ -3,6 +3,9 @@ import { ROUTE_STEP_STATUS, type RouteStepStatus } from '@logiflow/shared-models
 export const RoutePageConstants = {
   DefaultZoom: 13,
   MapHeightVh: 55,
+  PolylineStrokeColor: '#229ED9',
+  PolylineStrokeOpacity: 0.8,
+  PolylineStrokeWeight: 3,
 } as const;
 
 export const MapStyleConstants = {
