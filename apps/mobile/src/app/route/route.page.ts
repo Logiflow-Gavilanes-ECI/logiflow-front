@@ -12,6 +12,7 @@ import {
   IonChip,
   IonContent,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -28,6 +29,7 @@ import {
   RouteStatusLabelConstants,
 } from './route.constants';
 import { environment } from '../../environments/environment';
+import { NavIconConstants, StatusIconConstants } from '../core/constants/icons.constants';
 
 @Component({
   selector: 'logiflow-route-page',
@@ -40,6 +42,7 @@ import { environment } from '../../environments/environment';
     IonChip,
     IonContent,
     IonHeader,
+    IonIcon,
     IonItem,
     IonLabel,
     IonList,
@@ -53,6 +56,7 @@ export class RoutePage implements AfterViewInit {
   private readonly mapContainerRef!: ElementRef<HTMLDivElement>;
 
   readonly routeSteps: RouteStep[] = [];
+  readonly routeIconName = NavIconConstants.route;
 
   private readonly routeService = inject(RouteService);
   private readonly mapsService = inject(MapsService);
@@ -87,6 +91,18 @@ export class RoutePage implements AfterViewInit {
 
   getStatusColor(step: RouteStep): string {
     return MarkerColorConstants[step.status];
+  }
+
+  getStatusIcon(step: RouteStep): string {
+    if (step.status === 'completed') {
+      return StatusIconConstants.completed;
+    }
+
+    if (step.status === 'active') {
+      return StatusIconConstants.enCamino;
+    }
+
+    return StatusIconConstants.pending;
   }
 
   private async loadDriverRoute(): Promise<DriverRoute> {

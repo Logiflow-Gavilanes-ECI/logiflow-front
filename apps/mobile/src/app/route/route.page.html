@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Assigned Route</ion-title>
+    <ion-title>
+      <ion-icon [name]="routeIconName"></ion-icon>
+      Assigned Route
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -30,6 +33,7 @@
         </ion-label>
 
         <ion-chip slot="end" [style.background-color]="getStatusColor(step)">
+          <ion-icon [name]="getStatusIcon(step)"></ion-icon>
           <ion-label>{{ getStatusLabel(step) }}</ion-label>
         </ion-chip>
       </ion-item>
