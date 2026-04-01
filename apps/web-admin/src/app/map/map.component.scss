@@ -36,6 +36,43 @@
   }
 }
 
+.map-skeleton-overlay {
+  position: absolute;
+  inset: 0;
+  background: #080c14;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.skeleton-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 60%;
+  max-width: 400px;
+}
+
+.sk-block {
+  border-radius: 6px;
+  height: 14px;
+
+  &--wide   { width: 100%; }
+  &--medium { width: 70%; }
+  &--narrow { width: 45%; }
+}
+
+.skeleton-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #1a2540;
+  text-transform: uppercase;
+}
+
 .route-toast {
   position: absolute;
   bottom: 24px;

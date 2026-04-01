@@ -1,14 +1,23 @@
 <div class="stats-bar">
   <div class="stat-box">
-    <div class="stat-value online">{{ onlineCount }}</div>
+    <div class="stat-value online">
+      <ng-container *ngIf="!isLoading">{{ onlineCount }}</ng-container>
+      <ion-skeleton-text *ngIf="isLoading" [animated]="true" class="stat-skeleton"></ion-skeleton-text>
+    </div>
     <div class="stat-label">En línea</div>
   </div>
   <div class="stat-box">
-    <div class="stat-value offline">{{ offlineCount }}</div>
+    <div class="stat-value offline">
+      <ng-container *ngIf="!isLoading">{{ offlineCount }}</ng-container>
+      <ion-skeleton-text *ngIf="isLoading" [animated]="true" class="stat-skeleton"></ion-skeleton-text>
+    </div>
     <div class="stat-label">Offline</div>
   </div>
   <div class="stat-box">
-    <div class="stat-value routes">{{ routeCount }}</div>
+    <div class="stat-value routes">
+      <ng-container *ngIf="!isLoading">{{ routeCount }}</ng-container>
+      <ion-skeleton-text *ngIf="isLoading" [animated]="true" class="stat-skeleton"></ion-skeleton-text>
+    </div>
     <div class="stat-label">Rutas hoy</div>
   </div>
 </div>
@@ -18,34 +27,51 @@
 </div>
 
 <div class="vehicle-list">
-  <div
-    *ngIf="vehicles.length === 0"
-    class="empty-hint"
-  >
-    Esperando conexión...
-  </div>
-
-  <div
-    *ngFor="let v of vehicles"
-    class="vehicle-card"
-    [class.offline]="v.isOffline"
-    (click)="onCardClick(v.vehicleId)"
-  >
-    <div class="card-header">
-      <span class="vehicle-id">{{ v.vehicleId }}</span>
-      <span class="badge" [class.offline]="v.isOffline">
-        {{ v.isOffline ? 'OFFLINE' : 'EN LÍNEA' }}
-      </span>
-    </div>
-    <div class="card-stats">
-      <div class="stat">Lat <span>{{ v.lat !== null ? (v.lat | number:'1.4-4') : '--' }}</span></div>
-      <div class="stat">Lng <span>{{ v.lng !== null ? (v.lng | number:'1.4-4') : '--' }}</span></div>
-      <div class="stat">Vel <span>{{ v.speed !== null ? v.speed + ' km/h' : '--' }}</span></div>
-      <div class="stat">Estado
-        <span [style.color]="v.isOffline ? '#ff1744' : '#00e676'">
-          {{ v.isOffline ? '⚠' : '✓' }}
-        </span>
+  <ng-container *ngIf="isLoading">
+    <div class="vehicle-card skeleton-card" *ngFor="let i of [1, 2, 3]">
+      <div class="card-header">
+        <ion-skeleton-text [animated]="true" class="skeleton-id"></ion-skeleton-text>
+        <ion-skeleton-text [animated]="true" class="skeleton-badge"></ion-skeleton-text>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><ion-skeleton-text [animated]="true" class="skeleton-stat"></ion-skeleton-text></div>
+        <div class="stat"><ion-skeleton-text [animated]="true" class="skeleton-stat"></ion-skeleton-text></div>
+        <div class="stat"><ion-skeleton-text [animated]="true" class="skeleton-stat"></ion-skeleton-text></div>
+        <div class="stat"><ion-skeleton-text [animated]="true" class="skeleton-stat"></ion-skeleton-text></div>
       </div>
     </div>
-  </div>
+  </ng-container>
+
+  <ng-container *ngIf="!isLoading">
+    <div
+      *ngIf="vehicles.length === 0"
+      class="empty-hint"
+    >
+      Esperando conexión...
+    </div>
+
+    <div
+      *ngFor="let v of vehicles"
+      class="vehicle-card"
+      [class.offline]="v.isOffline"
+      (click)="onCardClick(v.vehicleId)"
+    >
+      <div class="card-header">
+        <span class="vehicle-id">{{ v.vehicleId }}</span>
+        <span class="badge" [class.offline]="v.isOffline">
+          {{ v.isOffline ? 'OFFLINE' : 'EN LÍNEA' }}
+        </span>
+      </div>
+      <div class="card-stats">
+        <div class="stat">Lat <span>{{ v.lat !== null ? (v.lat | number:'1.4-4') : '--' }}</span></div>
+        <div class="stat">Lng <span>{{ v.lng !== null ? (v.lng | number:'1.4-4') : '--' }}</span></div>
+        <div class="stat">Vel <span>{{ v.speed !== null ? v.speed + ' km/h' : '--' }}</span></div>
+        <div class="stat">Estado
+          <span [style.color]="v.isOffline ? '#ff1744' : '#00e676'">
+            {{ v.isOffline ? '⚠' : '✓' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </div>
