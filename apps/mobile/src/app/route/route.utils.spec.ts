@@ -65,7 +65,7 @@ function createStep(
     stopId,
     address: `${stopId} address`,
     lat: 4.6 + arrivalOrder,
-    lng: -74.0 - arrivalOrder,
+    lng: -74 - arrivalOrder,
     arrivalOrder,
     status,
   };

@@ -10,7 +10,6 @@ import { environment } from '../../../environments/environment';
 import {
   SocketConnectionConstants,
   SocketEventConstants,
-  SocketRoomConstants,
 } from '../constants/socket.constants';
 import { RouteJwtClaimConstants } from '../../route/route.constants';
 import { Observable, Subject } from 'rxjs';
@@ -174,7 +173,7 @@ function normalizeRouteUpdatePayload(
   fallbackVehicleId: string,
 ): DriverRoute {
   const steps = (payload.stops ?? [])
-    .map(mapStopPayloadToRouteStep)
+    .map((step, index) => mapStopPayloadToRouteStep(step, index))
     .sort(compareRouteStepsByArrivalOrder);
 
   return {

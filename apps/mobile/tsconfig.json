@@ -16,7 +16,7 @@
       "@logiflow/shared-maps": ["../../shared/maps/src/index.ts"],
       "@logiflow/shared-socket": ["../../shared/socket/src/index.ts"]
     },
-    "types": ["google.maps"]
+    "types": ["google.maps", "jasmine"]
   },
   "references": [
     { "path": "../../shared/models" },
