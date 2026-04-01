@@ -1,9 +1,17 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@logiflow/shared-models": ["shared/models/src/index.ts"],
+      "@logiflow/shared-auth": ["shared/auth/src/index.ts"],
+      "@logiflow/shared-maps": ["shared/maps/src/index.ts"],
+      "@logiflow/shared-socket": ["shared/socket/src/index.ts"]
+    },
     "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,

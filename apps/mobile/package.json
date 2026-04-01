@@ -9,9 +9,19 @@
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@ionic/angular": "^8.0.0",
     "@logiflow/shared-auth": "0.1.0",
     "@logiflow/shared-maps": "0.1.0",
     "@logiflow/shared-models": "0.1.0",
-    "@logiflow/shared-socket": "0.1.0"
+    "@logiflow/shared-socket": "0.1.0",
+    "rxjs": "~7.8.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@types/google.maps": "^3.58.1"
   }
 }

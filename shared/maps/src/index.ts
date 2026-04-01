@@ -1,3 +1,5 @@
+import { Injectable } from '@angular/core';
+
 export interface Coordinates {
   lat: number;
   lng: number;
@@ -36,4 +38,54 @@ export function totalPolylineDistanceKm(points: Coordinates[]): number {
 
 export function toGoogleLatLngLiteral(point: Coordinates): { lat: number; lng: number } {
   return { lat: point.lat, lng: point.lng };
+}
+
+@Injectable({ providedIn: 'root' })
+export class MapsService {
+  private loadingPromise: Promise<void> | null = null;
+
+  loadGoogleMapsApi(apiKey: string): Promise<void> {
+    if (this.isGoogleMapsAvailable()) {
+      return Promise.resolve();
+    }
+
+    if (this.loadingPromise) {
+      return this.loadingPromise;
+    }
+
+    this.loadingPromise = new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script');
+      const callbackName = 'logiflowMapsInit';
+
+      (globalThis as typeof globalThis & { [key: string]: (() => void) | undefined })[callbackName] =
+        function onGoogleMapsLoaded() {
+          resolve();
+        };
+
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&callback=${callbackName}`;
+      script.async = true;
+      script.defer = true;
+      script.onerror = function onGoogleMapsLoadError() {
+        reject(new Error('Unable to load Google Maps JavaScript API.'));
+      };
+
+      document.head.appendChild(script);
+    }).finally(() => {
+      this.loadingPromise = null;
+    });
+
+    return this.loadingPromise;
+  }
+
+  createMap(
+    mapElement: HTMLElement,
+    options: google.maps.MapOptions,
+  ): google.maps.Map {
+    return new google.maps.Map(mapElement, options);
+  }
+
+  private isGoogleMapsAvailable(): boolean {
+    const typedWindow = globalThis.window as Window & { google?: unknown };
+    return typedWindow.google !== undefined;
+  }
 }

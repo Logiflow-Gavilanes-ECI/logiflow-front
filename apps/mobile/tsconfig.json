@@ -1,8 +1,22 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@shared-models": ["../../shared/models/src/index.ts"],
+      "@shared-auth": ["../../shared/auth/src/index.ts"],
+      "@shared-maps": ["../../shared/maps/src/index.ts"],
+      "@shared-socket": ["../../shared/socket/src/index.ts"],
+      "@logiflow/shared-models": ["../../shared/models/src/index.ts"],
+      "@logiflow/shared-auth": ["../../shared/auth/src/index.ts"],
+      "@logiflow/shared-maps": ["../../shared/maps/src/index.ts"],
+      "@logiflow/shared-socket": ["../../shared/socket/src/index.ts"]
+    },
+    "types": ["google.maps"]
   },
   "references": [
     { "path": "../../shared/models" },

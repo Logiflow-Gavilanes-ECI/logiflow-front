@@ -1,1 +1,1 @@
-export * from '@logiflow/shared-maps';
+export * from '@shared-maps';

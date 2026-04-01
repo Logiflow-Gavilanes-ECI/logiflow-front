@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.route-content {
+  --overflow: hidden;
+}
+
+.map-wrapper {
+  height: 55vh;
+  min-height: 280px;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+}
