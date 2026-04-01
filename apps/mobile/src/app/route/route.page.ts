@@ -22,6 +22,7 @@ import { MapsService } from '@logiflow/shared-maps';
 import { type DriverRoute, type RouteStep } from '@logiflow/shared-models';
 import { RouteService } from '../core/services/route.service';
 import {
+  MarkerColorConstants,
   MapStyleConstants,
   RoutePageConstants,
 } from './route.constants';
@@ -55,6 +56,7 @@ export class RoutePage implements AfterViewInit {
   private readonly routeService = inject(RouteService);
   private readonly mapsService = inject(MapsService);
 
+  private readonly markerByStopId = new Map<string, google.maps.Marker>();
   private mapInstance: google.maps.Map | null = null;
   private currentRoute: DriverRoute | null = null;
 
@@ -124,6 +126,41 @@ export class RoutePage implements AfterViewInit {
     const firstStep = this.currentRoute.steps[0];
     this.mapInstance.setCenter({ lat: firstStep.lat, lng: firstStep.lng });
     this.mapInstance.setZoom(RoutePageConstants.DefaultZoom);
+
+    this.clearMarkers();
+    this.renderMarkers(this.currentRoute.steps);
+  }
+
+  private renderMarkers(steps: RouteStep[]): void {
+    for (const step of steps) {
+      const marker = new google.maps.Marker({
+        map: this.mapInstance,
+        position: { lat: step.lat, lng: step.lng },
+        label: step.arrivalOrder.toString(),
+        icon: this.buildMarkerIcon(step),
+      });
+
+      this.markerByStopId.set(step.stopId, marker);
+    }
+  }
+
+  private buildMarkerIcon(step: RouteStep): google.maps.Symbol {
+    return {
+      path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+      scale: 6,
+      fillColor: MarkerColorConstants[step.status],
+      fillOpacity: 1,
+      strokeColor: MapStyleConstants.MarkerStrokeColor,
+      strokeWeight: 1,
+    };
+  }
+
+  private clearMarkers(): void {
+    for (const marker of this.markerByStopId.values()) {
+      marker.setMap(null);
+    }
+
+    this.markerByStopId.clear();
   }
 }
 
