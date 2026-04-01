@@ -32,6 +32,7 @@ import {
   RoutePageConstants,
   RouteStatusLabelConstants,
 } from './route.constants';
+import { mergeRouteUpdate } from './route.utils';
 import { environment } from '../../environments/environment';
 import { NavIconConstants, StatusIconConstants } from '../core/constants/icons.constants';
 
@@ -309,23 +310,4 @@ function mapStepToLatLngLiteral(step: RouteStep): google.maps.LatLngLiteral {
 
 function stopMarkerBounceAnimation(marker: google.maps.Marker): void {
   marker.setAnimation(null);
-}
-
-function mergeRouteUpdate(current: RouteStep[], incoming: RouteStep[]): RouteStep[] {
-  const completedSteps = current.filter(isCompletedRouteStep);
-  const completedStopIdSet = new Set(completedSteps.map(mapRouteStepToStopId));
-
-  const incomingWithoutCompleted = incoming.filter(
-    (step) => !completedStopIdSet.has(step.stopId),
-  );
-
-  return [...completedSteps, ...incomingWithoutCompleted].sort(compareRouteStepsByArrivalOrder);
-}
-
-function mapRouteStepToStopId(step: RouteStep): string {
-  return step.stopId;
-}
-
-function isCompletedRouteStep(step: RouteStep): boolean {
-  return step.status === 'completed';
 }
