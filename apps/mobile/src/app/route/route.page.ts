@@ -16,6 +16,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonNote,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -46,6 +47,7 @@ import { NavIconConstants, StatusIconConstants } from '../core/constants/icons.c
     IonItem,
     IonLabel,
     IonList,
+    IonNote,
     IonTitle,
     IonToolbar,
   ],

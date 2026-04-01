@@ -15,6 +15,7 @@
   <div class="stop-list-wrapper">
     <ion-list>
       <ion-item
+        class="stop-item"
         detail="false"
         button="true"
         *ngFor="let step of routeSteps"
@@ -28,9 +29,7 @@
           {{ step.arrivalOrder }}
         </ion-badge>
 
-        <ion-label>
-          {{ step.address }}
-        </ion-label>
+        <ion-note class="stop-address">{{ step.address }}</ion-note>
 
         <ion-chip slot="end" [style.background-color]="getStatusColor(step)">
           <ion-icon [name]="getStatusIcon(step)"></ion-icon>
