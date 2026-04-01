@@ -43,11 +43,10 @@
   </ng-container>
 
   <ng-container *ngIf="!isLoading">
-    <div
-      *ngIf="vehicles.length === 0"
-      class="empty-hint"
-    >
-      Esperando conexión...
+    <div *ngIf="vehicles.length === 0" class="empty-state">
+      <ion-icon name="car-outline" class="empty-state__icon"></ion-icon>
+      <span class="empty-state__title">Sin vehículos conectados</span>
+      <span class="empty-state__subtitle">Los vehículos aparecerán aquí cuando estén en línea</span>
     </div>
 
     <div
