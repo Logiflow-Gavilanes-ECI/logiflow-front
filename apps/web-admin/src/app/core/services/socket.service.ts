@@ -17,6 +17,7 @@ export class SocketService implements OnDestroy {
   private readonly vehicleOffline$ = new Subject<VehicleStatusEvent>();
   private readonly vehicleOnline$ = new Subject<VehicleStatusEvent>();
   private readonly joined$ = new Subject<JoinRoomAck>();
+  private readonly disconnect$ = new Subject<void>();
 
   connect(url: string): void {
     if (this.socket) return;
@@ -28,6 +29,7 @@ export class SocketService implements OnDestroy {
     this.socket.onVehicleOffline((p) => this.vehicleOffline$.next(p));
     this.socket.onVehicleOnline((p) => this.vehicleOnline$.next(p));
     this.socket.onJoined((p) => this.joined$.next(p));
+    this.socket.onDisconnect(() => this.disconnect$.next());
 
     this.socket.connect();
   }
@@ -35,6 +37,11 @@ export class SocketService implements OnDestroy {
   disconnect(): void {
     this.socket?.disconnect();
     this.socket = null;
+  }
+
+  reconnect(url: string): void {
+    this.disconnect();
+    this.connect(url);
   }
 
   joinFleet(): void {
@@ -65,6 +72,10 @@ export class SocketService implements OnDestroy {
     return this.joined$.asObservable();
   }
 
+  onDisconnect(): Observable<void> {
+    return this.disconnect$.asObservable();
+  }
+
   ngOnDestroy(): void {
     this.disconnect();
     this.position$.complete();
@@ -72,5 +83,6 @@ export class SocketService implements OnDestroy {
     this.vehicleOffline$.complete();
     this.vehicleOnline$.complete();
     this.joined$.complete();
+    this.disconnect$.complete();
   }
 }

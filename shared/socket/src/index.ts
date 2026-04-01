@@ -117,4 +117,9 @@ export class LogiFlowSocketService {
     this.socket.on(SOCKET_EVENTS.VehicleOnline, handler);
     return () => this.socket.off(SOCKET_EVENTS.VehicleOnline, handler);
   }
+
+  onDisconnect(handler: () => void): () => void {
+    this.socket.on('disconnect', handler);
+    return () => this.socket.off('disconnect', handler);
+  }
 }
