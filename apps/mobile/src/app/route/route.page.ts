@@ -39,6 +39,7 @@ import {
   TripStatusDisplayConstants,
   type TripStatus,
 } from '../core/constants/trip-status.constants';
+import { TripStatusComponent } from '../shared/components/trip-status/trip-status.component';
 
 interface RouteStatusDisplay {
   label: string;
@@ -70,6 +71,7 @@ const NeutralRouteStatusDisplay: RouteStatusDisplay = {
     IonNote,
     IonTitle,
     IonToolbar,
+    TripStatusComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -112,6 +114,22 @@ export class RoutePage implements AfterViewInit {
     this.mapInstance.panTo({ lat: step.lat, lng: step.lng });
     this.mapInstance.setZoom(RoutePageConstants.SelectedStopZoom);
     this.animateStopMarker(step.stopId);
+  }
+
+  handleTripStatusChange(newStatus: TripStatus): void {
+    this.currentStatus = newStatus;
+
+    const vehicleId = this.currentRoute?.vehicleId ?? '';
+    if (!vehicleId) {
+      return;
+    }
+
+    const activeStop = this.getActiveStop();
+    this.driverSocketService.emitStatusUpdate(
+      vehicleId,
+      newStatus,
+      activeStop?.stopId ?? null,
+    );
   }
 
   getStatusLabel(step: RouteStep): string {
@@ -323,6 +341,10 @@ export class RoutePage implements AfterViewInit {
       marker,
     );
   }
+
+  private getActiveStop(): RouteStep | undefined {
+    return this.routeSteps.find(isActiveRouteStep);
+  }
 }
 
 function compareRouteStepsByArrivalOrder(left: RouteStep, right: RouteStep): number {
@@ -335,4 +357,8 @@ function mapStepToLatLngLiteral(step: RouteStep): google.maps.LatLngLiteral {
 
 function stopMarkerBounceAnimation(marker: google.maps.Marker): void {
   marker.setAnimation(null);
+}
+
+function isActiveRouteStep(step: RouteStep): boolean {
+  return step.status === 'active';
 }

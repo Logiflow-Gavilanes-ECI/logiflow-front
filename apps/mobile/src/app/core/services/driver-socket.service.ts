@@ -13,6 +13,7 @@ import {
 } from '../constants/socket.constants';
 import { RouteJwtClaimConstants } from '../../route/route.constants';
 import { Observable, Subject } from 'rxjs';
+import { type TripStatus } from '../constants/trip-status.constants';
 
 interface RouteUpdatePayload {
   vehicleId?: string;
@@ -98,6 +99,20 @@ export class DriverSocketService {
     this.socket.disconnect();
     this.socket = null;
     this.activeVehicleId = null;
+  }
+
+  emitStatusUpdate(vehicleId: string, status: TripStatus, stopId: string | null): void {
+    if (!this.socket || !this.socket.connected) {
+      this.errorSubject.next('Socket is not connected. Unable to emit status update.');
+      return;
+    }
+
+    this.socket.emit(SocketEventConstants.vehicleStatus, {
+      vehicleId,
+      status,
+      stopId,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   private registerSocketListeners(socket: Socket): void {

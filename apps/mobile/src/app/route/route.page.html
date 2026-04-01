@@ -17,6 +17,12 @@
     <div id="map" #mapContainer class="map-container"></div>
   </div>
 
+  <div class="status-actions-wrapper">
+    <logiflow-trip-status
+      [currentStatus]="currentStatus"
+      (statusChange)="handleTripStatusChange($event)"></logiflow-trip-status>
+  </div>
+
   <div class="stop-list-wrapper">
     <ion-list>
       <ion-item
