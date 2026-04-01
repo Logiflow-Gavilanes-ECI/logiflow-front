@@ -32,6 +32,29 @@ export interface RouteStop {
   type?: string;
 }
 
+export const ROUTE_STEP_STATUS = {
+  Pending: 'pending',
+  Active: 'active',
+  Completed: 'completed',
+} as const;
+
+export type RouteStepStatus =
+  (typeof ROUTE_STEP_STATUS)[keyof typeof ROUTE_STEP_STATUS];
+
+export interface RouteStep {
+  stopId: string;
+  address: string;
+  lat: number;
+  lng: number;
+  arrivalOrder: number;
+  status: RouteStepStatus;
+}
+
+export interface DriverRoute {
+  vehicleId: string;
+  steps: RouteStep[];
+}
+
 export interface RouteUpdateEvent {
   vehicleId: string;
   stops: RouteStop[];
