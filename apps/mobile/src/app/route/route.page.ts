@@ -150,8 +150,27 @@ export class RoutePage implements AfterViewInit {
   }
 
   private applyRouteUpdate(newRoute: DriverRoute): void {
-    this.updateRouteState(newRoute);
-    this.renderRoute();
+    const mergedSteps = mergeRouteUpdate(this.routeSteps, newRoute.steps);
+
+    this.clearRoutePolyline();
+    this.clearMarkers();
+
+    this.currentRoute = {
+      vehicleId: newRoute.vehicleId,
+      steps: [...mergedSteps].sort(compareRouteStepsByArrivalOrder),
+    };
+
+    this.routeSteps.splice(0, this.routeSteps.length, ...this.currentRoute.steps);
+
+    if (!this.mapInstance || this.currentRoute.steps.length === 0) {
+      return;
+    }
+
+    const firstStep = this.currentRoute.steps[0];
+    this.mapInstance.setCenter({ lat: firstStep.lat, lng: firstStep.lng });
+    this.mapInstance.setZoom(RoutePageConstants.DefaultZoom);
+    this.renderMarkers(this.currentRoute.steps);
+    this.renderOrderedPolyline(this.currentRoute.steps);
   }
 
   private async showRouteUpdateToast(): Promise<void> {
@@ -290,4 +309,23 @@ function mapStepToLatLngLiteral(step: RouteStep): google.maps.LatLngLiteral {
 
 function stopMarkerBounceAnimation(marker: google.maps.Marker): void {
   marker.setAnimation(null);
+}
+
+function mergeRouteUpdate(current: RouteStep[], incoming: RouteStep[]): RouteStep[] {
+  const completedSteps = current.filter(isCompletedRouteStep);
+  const completedStopIdSet = new Set(completedSteps.map(mapRouteStepToStopId));
+
+  const incomingWithoutCompleted = incoming.filter(
+    (step) => !completedStopIdSet.has(step.stopId),
+  );
+
+  return [...completedSteps, ...incomingWithoutCompleted].sort(compareRouteStepsByArrivalOrder);
+}
+
+function mapRouteStepToStopId(step: RouteStep): string {
+  return step.stopId;
+}
+
+function isCompletedRouteStep(step: RouteStep): boolean {
+  return step.status === 'completed';
 }
