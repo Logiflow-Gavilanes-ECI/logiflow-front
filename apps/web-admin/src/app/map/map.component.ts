@@ -39,7 +39,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.loadGoogleMaps().then(() => {
       this.initMap();
-      this.socketService.connect(environment.realtimeUrl);
+      this.socketService.connect();
       this.socketService.joinFleet();
       this.subscribeToEvents();
     });
