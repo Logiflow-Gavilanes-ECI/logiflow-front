@@ -8,6 +8,7 @@ import type {
   JoinRoomAck,
 } from '@logiflow/shared-models';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SocketService implements OnDestroy {
@@ -23,11 +24,11 @@ export class SocketService implements OnDestroy {
 
   constructor(private readonly authService: AuthService) {}
 
-  connect(url: string): void {
+  connect(): void {
     if (this.socket) return;
 
     const token = this.authService.getToken() ?? '';
-    this.socket = new LogiFlowSocketService({ url, autoConnect: false, auth: { token } });
+    this.socket = new LogiFlowSocketService({ url: environment.realtimeUrl, autoConnect: false, auth: { token } });
 
     this.socket.onVehiclePosition((p) => this.position$.next(p));
     this.socket.onRouteUpdate((p) => this.routeUpdate$.next(p));
@@ -50,9 +51,9 @@ export class SocketService implements OnDestroy {
     this.socket = null;
   }
 
-  reconnect(url: string): void {
+  reconnect(): void {
     this.disconnect();
-    this.connect(url);
+    this.connect();
   }
 
   joinFleet(): void {

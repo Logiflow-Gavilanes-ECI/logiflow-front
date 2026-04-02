@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MapComponent } from '../map/map.component';
 import { SocketService } from '../core/services/socket.service';
-import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -35,7 +34,7 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   reconnect(): void {
-    this.socketService.reconnect(environment.realtimeUrl);
+    this.socketService.reconnect();
     this.socketService.joinFleet();
   }
 
