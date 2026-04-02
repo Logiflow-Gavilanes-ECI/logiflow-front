@@ -53,6 +53,7 @@ export interface JoinVehiclePayload {
 export interface LogiFlowSocketConfig {
   url: string;
   autoConnect?: boolean;
+  auth?: { token: string };
 }
 
 export class LogiFlowSocketService {
@@ -64,6 +65,7 @@ export class LogiFlowSocketService {
       reconnection: true,
       reconnectionAttempts: 10,
       reconnectionDelay: 2000,
+      auth: config.auth,
     });
   }
 
@@ -121,5 +123,10 @@ export class LogiFlowSocketService {
   onDisconnect(handler: () => void): () => void {
     this.socket.on('disconnect', handler);
     return () => this.socket.off('disconnect', handler);
+  }
+
+  onConnectError(handler: (err: Error) => void): () => void {
+    this.socket.on('connect_error', handler);
+    return () => this.socket.off('connect_error', handler);
   }
 }
