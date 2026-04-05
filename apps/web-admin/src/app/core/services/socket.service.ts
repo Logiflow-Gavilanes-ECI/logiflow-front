@@ -7,6 +7,8 @@ import type {
   VehicleStatusEvent,
   JoinRoomAck,
 } from '@logiflow/shared-models';
+import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SocketService implements OnDestroy {
@@ -17,17 +19,29 @@ export class SocketService implements OnDestroy {
   private readonly vehicleOffline$ = new Subject<VehicleStatusEvent>();
   private readonly vehicleOnline$ = new Subject<VehicleStatusEvent>();
   private readonly joined$ = new Subject<JoinRoomAck>();
+  private readonly disconnect$ = new Subject<void>();
+  private readonly connectError$ = new Subject<Error>();
 
-  connect(url: string): void {
+  constructor(private readonly authService: AuthService) {}
+
+  connect(): void {
     if (this.socket) return;
 
-    this.socket = new LogiFlowSocketService({ url, autoConnect: false });
+    const token = this.authService.getToken() ?? '';
+    this.socket = new LogiFlowSocketService({ url: environment.realtimeUrl, autoConnect: false, auth: { token } });
 
     this.socket.onVehiclePosition((p) => this.position$.next(p));
     this.socket.onRouteUpdate((p) => this.routeUpdate$.next(p));
     this.socket.onVehicleOffline((p) => this.vehicleOffline$.next(p));
     this.socket.onVehicleOnline((p) => this.vehicleOnline$.next(p));
     this.socket.onJoined((p) => this.joined$.next(p));
+    this.socket.onDisconnect(() => this.disconnect$.next());
+    this.socket.onConnectError((err) => {
+      this.connectError$.next(err);
+      if (err.message === 'Unauthorized') {
+        this.authService.logout();
+      }
+    });
 
     this.socket.connect();
   }
@@ -35,6 +49,11 @@ export class SocketService implements OnDestroy {
   disconnect(): void {
     this.socket?.disconnect();
     this.socket = null;
+  }
+
+  reconnect(): void {
+    this.disconnect();
+    this.connect();
   }
 
   joinFleet(): void {
@@ -65,6 +84,14 @@ export class SocketService implements OnDestroy {
     return this.joined$.asObservable();
   }
 
+  onDisconnect(): Observable<void> {
+    return this.disconnect$.asObservable();
+  }
+
+  onConnectError(): Observable<Error> {
+    return this.connectError$.asObservable();
+  }
+
   ngOnDestroy(): void {
     this.disconnect();
     this.position$.complete();
@@ -72,5 +99,7 @@ export class SocketService implements OnDestroy {
     this.vehicleOffline$.complete();
     this.vehicleOnline$.complete();
     this.joined$.complete();
+    this.disconnect$.complete();
+    this.connectError$.complete();
   }
 }

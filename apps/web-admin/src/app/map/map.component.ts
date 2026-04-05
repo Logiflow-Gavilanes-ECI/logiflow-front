@@ -26,19 +26,32 @@ export class MapComponent implements OnInit, OnDestroy {
   private readonly polylines: Record<string, google.maps.Polyline> = {};
   private readonly subscriptions: Subscription[] = [];
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
+  private loadingTimer: ReturnType<typeof setTimeout> | null = null;
 
   toastVisible = false;
   toastData: RouteToastData | null = null;
+  isLoading = true;
 
   constructor(private readonly socketService: SocketService) {}
 
   ngOnInit(): void {
+    this.loadingTimer = setTimeout(() => this.stopLoading(), 8000);
+
     this.loadGoogleMaps().then(() => {
       this.initMap();
-      this.socketService.connect(environment.realtimeUrl);
+      this.socketService.connect();
       this.socketService.joinFleet();
       this.subscribeToEvents();
     });
+  }
+
+  private stopLoading(): void {
+    if (!this.isLoading) return;
+    this.isLoading = false;
+    if (this.loadingTimer) {
+      clearTimeout(this.loadingTimer);
+      this.loadingTimer = null;
+    }
   }
 
   private loadGoogleMaps(): Promise<void> {
@@ -77,6 +90,7 @@ export class MapComponent implements OnInit, OnDestroy {
   private subscribeToEvents(): void {
     this.subscriptions.push(
       this.socketService.onVehiclePosition().subscribe((data: VehiclePositionEvent) => {
+        this.stopLoading();
         this.updateOrCreateMarker(data.vehicleId, data.lat, data.lng, false);
       }),
       this.socketService.onRouteUpdate().subscribe((data: RouteUpdateEvent) => {
@@ -167,5 +181,6 @@ export class MapComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((s) => s.unsubscribe());
     this.socketService.disconnect();
     if (this.toastTimer) clearTimeout(this.toastTimer);
+    if (this.loadingTimer) clearTimeout(this.loadingTimer);
   }
 }

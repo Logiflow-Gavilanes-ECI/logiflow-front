@@ -8,13 +8,21 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div class="dashboard-layout">
-    <aside class="sidebar">
-      <app-vehicle-list (vehicleClicked)="onVehicleClicked($event)"></app-vehicle-list>
-      <app-event-log></app-event-log>
-    </aside>
-    <main class="map-area">
-      <app-map #mapRef></app-map>
-    </main>
+  <div class="content-host">
+    <div class="dashboard-layout">
+      <aside class="sidebar">
+        <app-vehicle-list (vehicleClicked)="onVehicleClicked($event)"></app-vehicle-list>
+        <app-event-log></app-event-log>
+      </aside>
+      <main class="map-area">
+        <app-map #mapRef></app-map>
+      </main>
+    </div>
+
+    <div class="error-banner" *ngIf="socketError" role="alert">
+      <ion-icon name="wifi-outline" class="error-banner__icon"></ion-icon>
+      <span class="error-banner__text">Conexión perdida con el servidor</span>
+      <button class="error-banner__btn" (click)="reconnect()">Reconectar</button>
+    </div>
   </div>
 </ion-content>

@@ -21,9 +21,11 @@ export class VehicleListComponent implements OnInit, OnDestroy {
 
   vehicles: VehicleState[] = [];
   routeCount = 0;
+  isLoading = true;
 
   private readonly vehicleMap: Record<string, VehicleState> = {};
   private readonly subscriptions: Subscription[] = [];
+  private loadingTimer: ReturnType<typeof setTimeout> | null = null;
 
   get onlineCount(): number {
     return this.vehicles.filter((v) => !v.isOffline).length;
@@ -36,8 +38,11 @@ export class VehicleListComponent implements OnInit, OnDestroy {
   constructor(private readonly socketService: SocketService) {}
 
   ngOnInit(): void {
+    this.loadingTimer = setTimeout(() => this.stopLoading(), 8000);
+
     this.subscriptions.push(
       this.socketService.onVehiclePosition().subscribe((data) => {
+        this.stopLoading();
         this.upsert(data.vehicleId, { lat: data.lat, lng: data.lng, speed: data.speed, isOffline: false });
       }),
       this.socketService.onVehicleOffline().subscribe((data) => {
@@ -50,6 +55,15 @@ export class VehicleListComponent implements OnInit, OnDestroy {
         this.routeCount++;
       }),
     );
+  }
+
+  private stopLoading(): void {
+    if (!this.isLoading) return;
+    this.isLoading = false;
+    if (this.loadingTimer) {
+      clearTimeout(this.loadingTimer);
+      this.loadingTimer = null;
+    }
   }
 
   private upsert(vehicleId: string, patch: Partial<VehicleState>): void {
@@ -66,5 +80,6 @@ export class VehicleListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((s) => s.unsubscribe());
+    if (this.loadingTimer) clearTimeout(this.loadingTimer);
   }
 }
