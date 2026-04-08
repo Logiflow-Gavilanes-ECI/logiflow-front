@@ -6,9 +6,9 @@ import {
   type DriverRoute,
   type RouteStep,
 } from '@logiflow/shared-models';
-import { AuthTokenService, type JwtClaims } from '@logiflow/shared-auth';
 import { environment } from '../../../environments/environment';
 import { RouteApiConstants } from '../../route/route.constants';
+import { AuthService } from './auth.service';
 
 interface DriverRouteApiResponse {
   vehicleId?: string;
@@ -30,13 +30,12 @@ interface RouteStepApiResponse {
 export class RouteService {
   constructor(
     private readonly httpClient: HttpClient,
-    private readonly authTokenService: AuthTokenService,
+    private readonly authService: AuthService,
   ) {}
 
   async getDriverRoute(): Promise<DriverRoute> {
-    const token = this.authTokenService.getToken();
-    const claims = this.authTokenService.decodeClaims() ?? {};
-    const vehicleId = this.resolveVehicleId(claims);
+    const token = this.authService.getToken();
+    const vehicleId = this.resolveVehicleId();
 
     const routePath = this.buildDriverRoutePath(vehicleId);
     const headers = this.buildRequestHeaders(token);
@@ -49,13 +48,10 @@ export class RouteService {
     return this.normalizeDriverRoute(vehicleId, response);
   }
 
-  private resolveVehicleId(claims: JwtClaims): string {
-    if (typeof claims.sub === 'string' && claims.sub.trim().length > 0) {
-      return claims.sub;
-    }
-
-    if (typeof claims.username === 'string' && claims.username.trim().length > 0) {
-      return claims.username;
+  private resolveVehicleId(): string {
+    const userId = this.authService.getUserId();
+    if (typeof userId === 'string' && userId.trim().length > 0) {
+      return userId;
     }
 
     throw new Error('Route lookup id is missing in JWT claims.');
