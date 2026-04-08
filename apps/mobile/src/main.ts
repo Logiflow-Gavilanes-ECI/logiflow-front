@@ -1,11 +1,18 @@
-import { createDriverRuntime } from './app/core/runtime';
+import { RouteReuseStrategy } from '@angular/router';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
+import { AppComponent } from './app/app.component';
+import { appRoutes } from './app/app.routes';
 
-const socketUrl =
-  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
-    ?.LOGIFLOW_SOCKET_URL ?? 'http://localhost:3001';
-
-const runtime = createDriverRuntime({
-  socketUrl,
+void bootstrapApplication(AppComponent, {
+  providers: [
+    provideIonicAngular(),
+    provideHttpClient(),
+    provideRouter(appRoutes),
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  ],
+}).catch((error: unknown) => {
+  console.error('[mobile] bootstrap failed', error);
 });
-
-runtime.start();
