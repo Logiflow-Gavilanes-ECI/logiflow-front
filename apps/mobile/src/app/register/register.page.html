@@ -7,6 +7,12 @@
       </div>
 
       <form #registerForm="ngForm" class="register-form" (ngSubmit)="onSubmit(registerForm)" novalidate>
+        <div class="network-error" *ngIf="networkErrorMessage" role="alert">
+          <p class="network-error__title">Network error</p>
+          <p class="network-error__message">{{ networkErrorMessage }}</p>
+          <button type="button" class="network-error__btn" (click)="dismissNetworkError()">Dismiss</button>
+        </div>
+
         <p class="form-error" *ngIf="formError">{{ formError }}</p>
 
         <div class="field">
