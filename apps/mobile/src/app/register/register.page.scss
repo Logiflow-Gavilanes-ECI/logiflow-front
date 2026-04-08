@@ -61,6 +61,45 @@ ion-content {
   font-size: 11px;
 }
 
+.network-error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  border-radius: 8px;
+  padding: 10px 12px;
+
+  &__title {
+    margin: 0 0 4px;
+    color: #ef4444;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+
+  &__message {
+    margin: 0;
+    color: #fca5a5;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  &__btn {
+    margin-top: 8px;
+    border: 1px solid rgba(252, 165, 165, 0.5);
+    border-radius: 6px;
+    background: transparent;
+    color: #fecaca;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.4px;
+    padding: 6px 10px;
+    text-transform: uppercase;
+  }
+}
+
 .field {
   display: flex;
   flex-direction: column;
