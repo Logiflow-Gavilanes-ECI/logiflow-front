@@ -19,15 +19,13 @@ interface LoginResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly tokenService = new AuthTokenService(localStorage, AUTH_TOKEN_KEY);
-
   constructor(private readonly httpClient: HttpClient) {}
 
+  private readonly tokenService = new AuthTokenService(localStorage, AUTH_TOKEN_KEY);
   async login(credentials: LoginRequest): Promise<string | null> {
     const response = await firstValueFrom(
       this.httpClient.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials),
     );
-
     const token = this.resolveToken(response);
     if (!token) {
       throw new Error('Authentication token is missing in login response.');

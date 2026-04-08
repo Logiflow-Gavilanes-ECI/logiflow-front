@@ -67,7 +67,6 @@ export class LoginPage {
   dismissNetworkError(): void {
     this.networkError = null;
   }
-
   private async redirectByRole(role: string | null): Promise<void> {
     if (role === 'admin') {
       await this.router.navigate(['/home']);
