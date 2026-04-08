@@ -1,0 +1,68 @@
+<ion-content>
+  <div class="register-wrapper">
+    <div class="register-card">
+      <div class="register-logo">
+        <span class="logo-text">Logi<span class="logo-accent">Flow</span></span>
+        <span class="logo-sub">Create account</span>
+      </div>
+
+      <form class="register-form" (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label class="field__label" for="fullName">Name</label>
+          <input
+            id="fullName"
+            class="field__input"
+            type="text"
+            [(ngModel)]="fullName"
+            name="fullName"
+            autocomplete="name"
+            placeholder="Juan Sebastian"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="email">Email</label>
+          <input
+            id="email"
+            class="field__input"
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            autocomplete="email"
+            placeholder="driver@logiflow.app"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="password">Password</label>
+          <input
+            id="password"
+            class="field__input"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            autocomplete="new-password"
+            placeholder="........"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="role">Role</label>
+          <select id="role" class="field__select" [(ngModel)]="role" name="role" required>
+            <option value="conductor">Conductor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <button class="register-btn" type="submit" [disabled]="isSubmitting">Create account</button>
+      </form>
+
+      <div class="auth-footer">
+        <a class="auth-link" routerLink="/login">Already have an account? Sign in</a>
+      </div>
+    </div>
+  </div>
+</ion-content>

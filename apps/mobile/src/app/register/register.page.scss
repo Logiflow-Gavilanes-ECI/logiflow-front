@@ -2,7 +2,7 @@ ion-content {
   --background: #080c14;
 }
 
-.login-wrapper {
+.register-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,7 +10,7 @@ ion-content {
   padding: 24px;
 }
 
-.login-card {
+.register-card {
   background: #0d1420;
   border: 1px solid #1a2540;
   border-radius: 12px;
@@ -19,7 +19,7 @@ ion-content {
   max-width: 420px;
 }
 
-.login-logo {
+.register-logo {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,7 +48,7 @@ ion-content {
   color: #2d3f5e;
 }
 
-.login-form {
+.register-form {
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -67,7 +67,8 @@ ion-content {
     color: #4a6080;
   }
 
-  &__input {
+  &__input,
+  &__select {
     background: #080c14;
     border: 1px solid #1a2540;
     border-radius: 6px;
@@ -77,18 +78,19 @@ ion-content {
     padding: 10px 14px;
     outline: none;
     transition: border-color 0.2s;
+  }
 
-    &::placeholder {
-      color: #1a2540;
-    }
+  &__input::placeholder {
+    color: #1a2540;
+  }
 
-    &:focus {
-      border-color: #00e5ff;
-    }
+  &__input:focus,
+  &__select:focus {
+    border-color: #00e5ff;
   }
 }
 
-.login-btn {
+.register-btn {
   background: #00e5ff;
   border: none;
   border-radius: 6px;
