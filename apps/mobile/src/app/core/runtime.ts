@@ -1,4 +1,3 @@
-import { AuthTokenService } from '@logiflow/shared-auth';
 import { totalPolylineDistanceKm } from '@logiflow/shared-maps';
 import { LogiFlowSocketService } from '@logiflow/shared-socket';
 import type { RouteUpdateEvent } from '@logiflow/shared-models';
@@ -7,13 +6,8 @@ export interface DriverRuntimeConfig {
   socketUrl: string;
 }
 
-function buildAuthService(): AuthTokenService {
-  return new AuthTokenService(localStorage);
-}
-
 export function createDriverRuntime(config: DriverRuntimeConfig) {
   const socket = new LogiFlowSocketService({ url: config.socketUrl });
-  const auth = buildAuthService();
 
   return {
     start() {
@@ -35,10 +29,6 @@ export function createDriverRuntime(config: DriverRuntimeConfig) {
           fallbackDistance,
         });
       });
-
-      if (auth.hasToken()) {
-        console.info('[mobile] token loaded');
-      }
     },
   };
 }

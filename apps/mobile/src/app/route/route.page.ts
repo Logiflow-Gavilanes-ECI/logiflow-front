@@ -187,7 +187,7 @@ export class RoutePage implements AfterViewInit {
     try {
       const route = await this.loadDriverRoute();
       this.updateRouteState(route);
-      this.driverSocketService.connect(route.vehicleId);
+      await this.driverSocketService.connect(route.vehicleId);
       this.renderRoute();
     } catch {
       this.updateRouteState({ vehicleId: '', steps: [] });
