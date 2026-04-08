@@ -1,12 +1,34 @@
-# Mobile App Scaffold (Ionic Angular)
+# Mobile App (Ionic Angular)
 
-This folder is prepared for the driver-facing mobile app.
+Driver-facing mobile app for LogiFlow.
 
-## Intent
-- Keep the framework-specific code here (Ionic Angular pages, components, guards).
-- Keep reusable business logic in shared libraries.
+## Run locally
 
-## Next implementation step
-1. Generate an Ionic Angular app directly in this folder.
-2. Keep existing `src/app/core` and wire it into Angular DI.
-3. Keep imports from shared packages (`@logiflow/shared-*`) for realtime, models, auth, and maps.
+From workspace root:
+
+```bash
+npm run start --workspace=@logiflow/mobile -- --port 8100
+```
+
+Then open:
+
+```text
+http://localhost:8100/login
+```
+
+## Mobile viewport preview
+
+Use Chrome or Edge DevTools and enable device toolbar (`Ctrl+Shift+M`) to preview iPhone/Android sizes.
+
+## Build and checks
+
+```bash
+npm run typecheck --workspace=@logiflow/mobile
+npm run build --workspace=@logiflow/mobile
+```
+
+## Current routes
+
+- `/login`: Login screen with role-based redirect
+- `/route`: Driver route view
+
