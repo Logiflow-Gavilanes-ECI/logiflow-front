@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AuthTokenService } from '@logiflow/shared-auth';
 import {
   ROUTE_STEP_STATUS,
   type DriverRoute,
@@ -13,6 +12,7 @@ import { io, type Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
 import { Observable, Subject } from 'rxjs';
 import { type TripStatus } from '../constants/trip-status.constants';
+import { AuthService } from './auth.service';
 
 interface RouteUpdatePayload {
   vehicleId?: string;
@@ -35,13 +35,12 @@ export class DriverSocketService {
   readonly routeUpdate$: Observable<DriverRoute>;
   readonly error$: Observable<string>;
 
-  private readonly authTokenService = new AuthTokenService(localStorage);
   private readonly routeUpdateSubject = new Subject<DriverRoute>();
   private readonly errorSubject = new Subject<string>();
   private socket: Socket | null = null;
   private activeVehicleId: string | null = null;
 
-  constructor() {
+  constructor(private readonly authService: AuthService) {
     this.routeUpdate$ = this.routeUpdateSubject.asObservable();
     this.error$ = this.errorSubject.asObservable();
 
@@ -51,12 +50,12 @@ export class DriverSocketService {
     this.handleRouteUpdateEvent = this.handleRouteUpdateEvent.bind(this);
   }
 
-  connect(vehicleId: string): void {
+  async connect(vehicleId: string): Promise<void> {
     if (this.socket?.connected) {
       return;
     }
 
-    const token = this.authTokenService.getToken();
+    const token = await this.authService.getToken();
     if (!token) {
       this.errorSubject.next('Authentication token is missing.');
       return;

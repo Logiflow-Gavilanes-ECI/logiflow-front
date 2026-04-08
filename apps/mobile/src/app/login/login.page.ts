@@ -56,7 +56,7 @@ export class LoginPage {
       return;
     }
 
-    this.authService.logout();
+    await this.authService.logout();
     await this.router.navigate(['/login']);
   }
 }
