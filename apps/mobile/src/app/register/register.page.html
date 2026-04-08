@@ -6,7 +6,9 @@
         <span class="logo-sub">Create account</span>
       </div>
 
-      <form class="register-form" (ngSubmit)="onSubmit()">
+      <form #registerForm="ngForm" class="register-form" (ngSubmit)="onSubmit(registerForm)" novalidate>
+        <p class="form-error" *ngIf="formError">{{ formError }}</p>
+
         <div class="field">
           <label class="field__label" for="fullName">Name</label>
           <input
@@ -14,11 +16,21 @@
             class="field__input"
             type="text"
             [(ngModel)]="fullName"
+            #fullNameModel="ngModel"
             name="fullName"
             autocomplete="name"
             placeholder="Juan Sebastian"
+            minlength="3"
             required
+            (ngModelChange)="onFieldChanged('fullName')"
           />
+          <span class="field__error" *ngIf="showControlError(fullNameModel, 'required')">
+            Name is required.
+          </span>
+          <span class="field__error" *ngIf="showControlError(fullNameModel, 'minlength')">
+            Name must be at least 3 characters.
+          </span>
+          <span class="field__error" *ngIf="fieldErrors.fullName">{{ fieldErrors.fullName }}</span>
         </div>
 
         <div class="field">
@@ -28,11 +40,21 @@
             class="field__input"
             type="email"
             [(ngModel)]="email"
+            #emailModel="ngModel"
             name="email"
             autocomplete="email"
             placeholder="driver@logiflow.app"
+            email
             required
+            (ngModelChange)="onFieldChanged('email')"
           />
+          <span class="field__error" *ngIf="showControlError(emailModel, 'required')">
+            Email is required.
+          </span>
+          <span class="field__error" *ngIf="showControlError(emailModel, 'email')">
+            Enter a valid email address.
+          </span>
+          <span class="field__error" *ngIf="fieldErrors.email">{{ fieldErrors.email }}</span>
         </div>
 
         <div class="field">
@@ -42,19 +64,41 @@
             class="field__input"
             type="password"
             [(ngModel)]="password"
+            #passwordModel="ngModel"
             name="password"
             autocomplete="new-password"
             placeholder="........"
+            minlength="6"
             required
+            (ngModelChange)="onFieldChanged('password')"
           />
+          <span class="field__error" *ngIf="showControlError(passwordModel, 'required')">
+            Password is required.
+          </span>
+          <span class="field__error" *ngIf="showControlError(passwordModel, 'minlength')">
+            Password must be at least 6 characters.
+          </span>
+          <span class="field__error" *ngIf="fieldErrors.password">{{ fieldErrors.password }}</span>
         </div>
 
         <div class="field">
           <label class="field__label" for="role">Role</label>
-          <select id="role" class="field__select" [(ngModel)]="role" name="role" required>
+          <select
+            id="role"
+            class="field__select"
+            [(ngModel)]="role"
+            #roleModel="ngModel"
+            name="role"
+            required
+            (ngModelChange)="onFieldChanged('role')">
+            <option value="" disabled>Select role</option>
             <option value="conductor">Conductor</option>
             <option value="admin">Admin</option>
           </select>
+          <span class="field__error" *ngIf="showControlError(roleModel, 'required')">
+            Role is required.
+          </span>
+          <span class="field__error" *ngIf="fieldErrors.role">{{ fieldErrors.role }}</span>
         </div>
 
         <button class="register-btn" type="submit" [disabled]="isSubmitting">Create account</button>

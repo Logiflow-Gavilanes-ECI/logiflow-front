@@ -6,7 +6,9 @@
         <span class="logo-sub">Driver App</span>
       </div>
 
-      <form class="login-form" (ngSubmit)="onSubmit()">
+      <form #loginForm="ngForm" class="login-form" (ngSubmit)="onSubmit(loginForm)" novalidate>
+        <p class="form-error" *ngIf="formError">{{ formError }}</p>
+
         <div class="field">
           <label class="field__label" for="email">Email</label>
           <input
@@ -14,11 +16,21 @@
             class="field__input"
             type="email"
             [(ngModel)]="email"
+            #emailModel="ngModel"
             name="email"
             autocomplete="email"
             placeholder="driver@logiflow.app"
+            email
             required
+            (ngModelChange)="onFieldChanged('email')"
           />
+          <span class="field__error" *ngIf="showControlError(emailModel, 'required')">
+            Email is required.
+          </span>
+          <span class="field__error" *ngIf="showControlError(emailModel, 'email')">
+            Enter a valid email address.
+          </span>
+          <span class="field__error" *ngIf="fieldErrors.email">{{ fieldErrors.email }}</span>
         </div>
 
         <div class="field">
@@ -28,11 +40,21 @@
             class="field__input"
             type="password"
             [(ngModel)]="password"
+            #passwordModel="ngModel"
             name="password"
             autocomplete="current-password"
             placeholder="........"
+            minlength="6"
             required
+            (ngModelChange)="onFieldChanged('password')"
           />
+          <span class="field__error" *ngIf="showControlError(passwordModel, 'required')">
+            Password is required.
+          </span>
+          <span class="field__error" *ngIf="showControlError(passwordModel, 'minlength')">
+            Password must be at least 6 characters.
+          </span>
+          <span class="field__error" *ngIf="fieldErrors.password">{{ fieldErrors.password }}</span>
         </div>
 
         <button class="login-btn" type="submit" [disabled]="isSubmitting">Sign in</button>

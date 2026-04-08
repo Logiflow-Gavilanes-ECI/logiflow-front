@@ -54,6 +54,13 @@ ion-content {
   gap: 18px;
 }
 
+.form-error {
+  margin: 0;
+  color: #ef4444;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -85,6 +92,13 @@ ion-content {
     &:focus {
       border-color: #00e5ff;
     }
+  }
+
+  &__error {
+    color: #ef4444;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    line-height: 1.4;
   }
 }
 
