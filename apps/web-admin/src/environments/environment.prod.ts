@@ -4,4 +4,6 @@ export const environment = {
   production: true,
   googleMapsApiKey: '',
   realtimeUrl: 'https://ws.logiflow.app',
+  apiUrl: 'https://api.logiflow.app/api/v1',
+  driverAppUrl: 'https://app.logiflow.app/route',
 };

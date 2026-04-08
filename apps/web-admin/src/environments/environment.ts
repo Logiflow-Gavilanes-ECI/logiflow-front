@@ -7,6 +7,7 @@ export const environment = {
   realtimeUrl: 'http://localhost:3001',
   googleMapsApiKey: '',
   apiUrl: 'http://localhost:3002/api/v1',
+  driverAppUrl: 'http://localhost:8100/route',
 };
 
 /*
