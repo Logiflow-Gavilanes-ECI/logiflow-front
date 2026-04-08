@@ -26,6 +26,7 @@ export class RegisterPage {
   isSubmitting = false;
   isSubmitted = false;
   formError: string | null = null;
+  networkErrorMessage: string | null = null;
   fieldErrors: Partial<Record<RegisterField, string>> = {};
 
   constructor(
@@ -58,11 +59,15 @@ export class RegisterPage {
 
       await this.redirectByRole(userRole);
     } catch (error) {
-      this.applyBackendValidationErrors(error);
+      this.handleSubmitError(error);
       console.error('[mobile-auth] register failed', error);
     } finally {
       this.isSubmitting = false;
     }
+  }
+
+  dismissNetworkError(): void {
+    this.networkErrorMessage = null;
   }
 
   onFieldChanged(field: RegisterField): void {
@@ -93,7 +98,27 @@ export class RegisterPage {
 
   private clearValidationErrors(): void {
     this.formError = null;
+    this.networkErrorMessage = null;
     this.fieldErrors = {};
+  }
+
+  private handleSubmitError(error: unknown): void {
+    if (this.isNetworkError(error)) {
+      this.networkErrorMessage = 'Unable to reach the server. Check your connection and try again.';
+      this.formError = null;
+      this.fieldErrors = {};
+      return;
+    }
+
+    this.applyBackendValidationErrors(error);
+  }
+
+  private isNetworkError(error: unknown): boolean {
+    if (!(error instanceof HttpErrorResponse)) {
+      return false;
+    }
+
+    return error.status === 0 || error.status === 502 || error.status === 503 || error.status === 504;
   }
 
   private applyBackendValidationErrors(error: unknown): void {
