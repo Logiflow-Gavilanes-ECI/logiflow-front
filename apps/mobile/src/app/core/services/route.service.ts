@@ -34,8 +34,8 @@ export class RouteService {
   ) {}
 
   async getDriverRoute(): Promise<DriverRoute> {
-    const token = this.authService.getToken();
-    const vehicleId = this.resolveVehicleId();
+    const token = await this.authService.getToken();
+    const vehicleId = await this.resolveVehicleId();
 
     const routePath = this.buildDriverRoutePath(vehicleId);
     const headers = this.buildRequestHeaders(token);
@@ -48,8 +48,8 @@ export class RouteService {
     return this.normalizeDriverRoute(vehicleId, response);
   }
 
-  private resolveVehicleId(): string {
-    const userId = this.authService.getUserId();
+  private async resolveVehicleId(): Promise<string> {
+    const userId = await this.authService.getUserId();
     if (typeof userId === 'string' && userId.trim().length > 0) {
       return userId;
     }

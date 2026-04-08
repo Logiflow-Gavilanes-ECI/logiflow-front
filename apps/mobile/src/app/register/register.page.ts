@@ -62,7 +62,7 @@ export class RegisterPage {
       return;
     }
 
-    this.authService.logout();
+    await this.authService.logout();
     await this.router.navigate(['/register']);
   }
 }
