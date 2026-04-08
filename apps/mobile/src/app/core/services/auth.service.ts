@@ -9,7 +9,16 @@ interface LoginRequest {
 	password: string;
 }
 
-interface LoginResponse {
+export type UserRole = 'admin' | 'conductor';
+
+interface RegisterRequest {
+	name: string;
+	email: string;
+	password: string;
+	role: UserRole;
+}
+
+interface AuthResponse {
 	access_token?: string;
 	accessToken?: string;
 	token?: string;
@@ -27,7 +36,21 @@ export class AuthService {
 
 	async login(credentials: LoginRequest): Promise<string | null> {
 		const response = await firstValueFrom(
-			this.httpClient.post<LoginResponse>(`${environment.apiBaseUrl}/auth/login`, credentials),
+			this.httpClient.post<AuthResponse>(`${environment.apiBaseUrl}/auth/login`, credentials),
+		);
+		const token = this.resolveToken(response);
+
+		if (!token) {
+			throw new Error('Authentication token is missing in login response.');
+		}
+
+		this.tokenService.setToken(token);
+		return this.resolveRole(response);
+	}
+
+	async register(payload: RegisterRequest): Promise<string | null> {
+		const response = await firstValueFrom(
+			this.httpClient.post<AuthResponse>(`${environment.apiBaseUrl}/auth/register`, payload),
 		);
 		const token = this.resolveToken(response);
 
@@ -61,7 +84,7 @@ export class AuthService {
 		this.tokenService.clearToken();
 	}
 
-	private resolveToken(response: LoginResponse): string | null {
+	private resolveToken(response: AuthResponse): string | null {
 		const token = response.access_token ?? response.accessToken ?? response.token;
 		if (typeof token !== 'string' || token.trim().length === 0) {
 			return null;
@@ -70,7 +93,7 @@ export class AuthService {
 		return token;
 	}
 
-	private resolveRole(response: LoginResponse): string | null {
+	private resolveRole(response: AuthResponse): string | null {
 		const role = response.role ?? response.user?.role;
 		if (typeof role === 'string' && role.trim().length > 0) {
 			return role;
