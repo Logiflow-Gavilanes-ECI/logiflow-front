@@ -2,6 +2,13 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 import { environment } from '../../environments/environment';
+import { HttpErrorResponse } from '@angular/common/http';
+import { NgForm, NgModel } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../core/services/auth.service';
+import { environment } from '../../environments/environment';
+
+type LoginField = 'email' | 'password';
 
 @Component({
   selector: 'app-login',

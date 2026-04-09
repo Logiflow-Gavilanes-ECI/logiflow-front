@@ -25,6 +25,8 @@ export class AuthService {
 
   private readonly tokenService = new AuthTokenService(localStorage, AUTH_TOKEN_KEY);
 
+  constructor(private readonly httpClient: HttpClient) {}
+
   async login(credentials: LoginRequest): Promise<string | null> {
     const response = await firstValueFrom(
       this.httpClient.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials),
