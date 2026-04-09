@@ -8,7 +8,7 @@
 
       <div class="network-error" *ngIf="networkError" role="alert">
         <span class="network-error__text">{{ networkError }}</span>
-        <button type="button" class="network-error__btn" (click)="dismissNetworkError()">✕</button>
+        <button type="button" class="network-error__btn" (click)="dismissNetworkError()" aria-label="Cerrar alerta">✕</button>
       </div>
 
       <p class="form-error" *ngIf="formError" role="alert">{{ formError }}</p>
