@@ -11,7 +11,11 @@ export const environment = {
   realtimeUrl: 'http://localhost:3001',
   googleMapsApiKey: '',
   apiUrl: 'http://localhost:3002/api/v1',
+<<<<<<< HEAD
 >>>>>>> e2a8220 (feat(frontend): add loading skeletons for vehicle list and map content #307)
+=======
+  driverAppUrl: 'http://localhost:8100',
+>>>>>>> 1ebe1d4 (feat(frontend): implement role-based redirect for conductor and unauthenticated users #301)
 };
 
 /*
