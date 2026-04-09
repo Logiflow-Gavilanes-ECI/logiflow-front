@@ -39,8 +39,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.loadGoogleMaps().then(() => {
       this.initMap();
-      this.socketService.connect();
-      this.socketService.joinFleet();
       this.subscribeToEvents();
     });
   }
@@ -179,7 +177,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((s) => s.unsubscribe());
-    this.socketService.disconnect();
     if (this.toastTimer) clearTimeout(this.toastTimer);
     if (this.loadingTimer) clearTimeout(this.loadingTimer);
   }
