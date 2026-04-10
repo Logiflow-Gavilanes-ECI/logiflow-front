@@ -55,6 +55,10 @@ export class DriverSocketService {
       return;
     }
 
+    if (this.socket) {
+      this.disconnect();
+    }
+
     const token = await this.authService.getToken();
     if (!token) {
       this.errorSubject.next('Authentication token is missing.');
