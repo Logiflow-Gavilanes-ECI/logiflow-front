@@ -12,10 +12,14 @@ export const environment = {
   googleMapsApiKey: '',
   apiUrl: 'http://localhost:3002/api/v1',
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> e2a8220 (feat(frontend): add loading skeletons for vehicle list and map content #307)
 =======
   driverAppUrl: 'http://localhost:8100',
 >>>>>>> 1ebe1d4 (feat(frontend): implement role-based redirect for conductor and unauthenticated users #301)
+=======
+  driverAppUrl: 'http://localhost:8100/route',
+>>>>>>> 5229dee (fix: align driverAppUrl dev environment to include /route path)
 };
 
 /*
