@@ -54,18 +54,25 @@ export class MapsService {
     }
 
     this.loadingPromise = new Promise<void>((resolve, reject) => {
+      const callbackName = `logiflowMapsInit_${Math.random().toString(36).slice(2)}`;
       const script = document.createElement('script');
-      const callbackName = 'logiflowMapsInit';
+      const globalAny = globalThis as Record<string, unknown>;
 
-      (globalThis as typeof globalThis & { [key: string]: (() => void) | undefined })[callbackName] =
-        function onGoogleMapsLoaded() {
-          resolve();
-        };
+      function cleanup(): void {
+        delete globalAny[callbackName];
+        script.remove();
+      }
+
+      globalAny[callbackName] = function onGoogleMapsLoaded() {
+        cleanup();
+        resolve();
+      };
 
       script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&callback=${callbackName}`;
       script.async = true;
       script.defer = true;
       script.onerror = function onGoogleMapsLoadError() {
+        cleanup();
         reject(new Error('Unable to load Google Maps JavaScript API.'));
       };
 
