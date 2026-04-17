@@ -26,6 +26,7 @@ import { MapsService } from '@logiflow/shared-maps';
 import { type DriverRoute, type RouteStep } from '@logiflow/shared-models';
 import { RouteService } from '../core/services/route.service';
 import { DriverSocketService } from '../core/services/driver-socket.service';
+import { PushNotificationService } from '../core/services/push-notification.service';
 import {
   MarkerColorConstants,
   MapStyleConstants,
@@ -88,6 +89,7 @@ export class RoutePage implements AfterViewInit {
   private readonly mapsService = inject(MapsService);
   private readonly driverSocketService = inject(DriverSocketService);
   private readonly toastController = inject(ToastController);
+  private readonly pushNotificationService = inject(PushNotificationService);
 
   private readonly markerByStopId = new Map<string, google.maps.Marker>();
   private mapInstance: google.maps.Map | null = null;
@@ -101,6 +103,7 @@ export class RoutePage implements AfterViewInit {
 
   ionViewWillEnter(): void {
     void this.loadAndRenderRoute();
+    void this.pushNotificationService.initialize();
   }
 
   ngAfterViewInit(): void {

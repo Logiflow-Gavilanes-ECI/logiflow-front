@@ -66,6 +66,10 @@ export class RegisterPage {
     }
   }
 
+  signInWithGoogle(): void {
+    globalThis.location.assign(`${environment.apiBaseUrl}/auth/google`);
+  }
+
   dismissNetworkError(): void {
     this.networkErrorMessage = null;
   }

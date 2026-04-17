@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/typescript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-```
+```text
   ██╗      ██████╗  ██████╗ ██╗███████╗██╗      ██████╗ ██╗    ██╗
   ██║     ██╔═══██╗██╔════╝ ██║██╔════╝██║     ██╔═══██╗██║    ██║
   ██║     ██║   ██║██║  ███╗██║█████╗  ██║     ██║   ██║██║ █╗ ██║
@@ -23,17 +23,17 @@
 
 ## 🗺️ Overview
 
-This monorepo contains both LogiFlow frontend applications and their shared libraries. Both apps connect to the same backend services for real-time fleet tracking, route optimization, and vehicle management.
+This monorepo contains both LogiFlow frontend applications and their shared libraries. Both apps connect to the same backend services for real-time fleet tracking, route optimization, and vehicle management. Authentication supports both **email/password** and **Google OAuth 2.0** single sign-on.
 
 ```mermaid
 graph TD
     subgraph Frontend Monorepo
         M["📱 Mobile App\nIonic Angular\nDriver Interface"]
         W["🖥️ Web Admin\nAngular Dashboard\nDispatcher Interface"]
-        S1["📦 @logiflow/shared-models"]
-        S2["📦 @logiflow/shared-socket"]
-        S3["📦 @logiflow/shared-auth"]
-        S4["📦 @logiflow/shared-maps"]
+        S1["📦 shared-models"]
+        S2["📦 shared-socket"]
+        S3["📦 shared-auth"]
+        S4["📦 shared-maps"]
     end
 
     M --> S1 & S2 & S3 & S4
@@ -42,10 +42,14 @@ graph TD
     subgraph Backend Services
         GW["⚙️ Gateway API\n:3002"]
         RT["📡 Realtime Server\n:3001"]
+        GO["🔐 Google OAuth"]
+        FCM["🔥 Firebase Push"]
     end
 
     S2 -->|Socket.io| RT
     S3 -->|REST + JWT| GW
+    M -->|Push Notifications| FCM
+    M & W -->|SSO| GO
 
     style M fill:#22c55e,color:#fff,stroke:#22c55e
     style W fill:#00e5ff,color:#000,stroke:#00e5ff
@@ -55,20 +59,28 @@ graph TD
     style S4 fill:#7c3aed,color:#fff,stroke:#7c3aed
     style GW fill:#ff6b35,color:#fff,stroke:#ff6b35
     style RT fill:#229ED9,color:#fff,stroke:#229ED9
+    style GO fill:#4285F4,color:#fff,stroke:#4285F4
+    style FCM fill:#FFCA28,color:#000,stroke:#FFCA28
 ```
 
 ---
 
 ## 📦 Workspace Layout
 
-```
+```text
 logiflow-front/
 ├── apps/
 │   ├── mobile/                 ← Driver-facing app (Ionic Angular)
 │   │   ├── src/app/
-│   │   │   ├── login/          ← Authentication screen
-│   │   │   ├── register/       ← User registration
-│   │   │   ├── route/          ← Active route + map + stop list
+│   │   │   ├── login/          ← Authentication (email + Google OAuth)
+│   │   │   ├── register/       ← User registration (+ Google sign-up)
+│   │   │   ├── route/          ← Active route + map + stop list + push init
+│   │   │   ├── auth-callback/  ← OAuth redirect handler
+│   │   │   ├── core/services/
+│   │   │   │   ├── auth.service.ts
+│   │   │   │   ├── push-notification.service.ts
+│   │   │   │   ├── route.service.ts
+│   │   │   │   └── driver-socket.service.ts
 │   │   │   └── shared/
 │   │   │       └── components/
 │   │   │           └── trip-status/  ← Start/Arrive/Deliver controls
@@ -77,7 +89,8 @@ logiflow-front/
 │   │
 │   └── web-admin/              ← Dispatcher dashboard (Angular)
 │       └── src/app/
-│           ├── login/          ← Admin authentication
+│           ├── login/          ← Admin auth (email + Google OAuth)
+│           ├── auth-callback/  ← OAuth redirect handler
 │           ├── home/           ← Dashboard layout (sidebar + map)
 │           ├── map/            ← Live fleet map component
 │           ├── vehicle-list/   ← Vehicle cards with status
@@ -132,18 +145,59 @@ The mobile app is built with **Ionic Angular v8** targeting Android and iOS.
 
 | Screen | Purpose |
 |--------|---------|
-| **Login** | JWT authentication with role-based redirect |
-| **Register** | New user registration (email, password, role) |
-| **Route** | Active delivery route with live map, stop list, and trip controls |
+| **Login** | JWT auth with email/password + Google OAuth sign-in |
+| **Register** | New user registration (email, password, role) + Google sign-up |
+| **Route** | Active delivery route with live map, stop list, trip controls, push notification init |
+| **Auth Callback** | Handles Google OAuth redirect, stores token, redirects by role |
 
 ### Key Features
 
 - Real-time position tracking via Socket.io
 - Interactive map with route polyline visualization
 - Trip status controls (Start → Arrived → Delivered)
+- **Google OAuth** single sign-on with "Sign in with Google" button
+- **Firebase Push Notifications** — receives route updates even when app is backgrounded
 - Automatic redirect: `conductor` → route view, `admin` → web dashboard
 - Responsive from 320px to tablet (768px+)
 - Pulse animation on active stop badges
+
+### Authentication Flow
+
+```mermaid
+graph LR
+    A["Login/Register\nScreen"] -->|email + password| B["POST /auth/login\nor /auth/register"]
+    A -->|Google button| C["GET /auth/google\nOAuth redirect"]
+    C --> D["Google Consent"]
+    D --> E["/auth/callback\nComponent"]
+    E -->|conductor| F["Route Page"]
+    E -->|admin| G["Web Admin"]
+    B -->|JWT token| F
+
+    style A fill:#0d1420,color:#e2e8f0,stroke:#1e293b
+    style C fill:#4285F4,color:#fff,stroke:#4285F4
+    style F fill:#22c55e,color:#fff,stroke:#22c55e
+    style G fill:#00e5ff,color:#000,stroke:#00e5ff
+```
+
+### Push Notification Flow
+
+```mermaid
+sequenceDiagram
+    participant App as Mobile App
+    participant Cap as Capacitor Plugin
+    participant FCM as Firebase Cloud Messaging
+    participant GW as Gateway API
+
+    App->>Cap: requestPermissions()
+    Cap-->>App: granted
+    App->>Cap: register()
+    Cap->>FCM: Register device
+    FCM-->>Cap: FCM token
+    Cap-->>App: registration event
+    App->>GW: POST /notifications/register-device
+    Note over App: Device token stored in DB
+    GW-->>App: Route update push notification
+```
 
 ---
 
@@ -153,7 +207,7 @@ The web admin dashboard provides a real-time fleet operations view.
 
 ### Layout
 
-```
+```text
 ┌─────────────────────────────────────────────┐
 │  🔵 LOGIFLOW  ·  FLEET CONTROL              │
 ├──────────┬──────────────────────────────────┤
@@ -167,7 +221,7 @@ The web admin dashboard provides a real-time fleet operations view.
 │ Event    │                    [Route Toast]   │
 │ Log      │                                   │
 ├──────────┴──────────────────────────────────┤
-│ ⚠️ Error Banner (if socket disconnected)     │
+│  Error Banner (if socket disconnected)       │
 └─────────────────────────────────────────────┘
 ```
 
@@ -175,6 +229,8 @@ The web admin dashboard provides a real-time fleet operations view.
 
 | Component | Description |
 |-----------|-------------|
+| **Login** | Email/password auth + Google OAuth "Continuar con Google" button |
+| **Auth Callback** | Handles Google OAuth redirect for web admin |
 | **Vehicle List** | Stats bar (online/offline/routes) + vehicle cards with lat/lng/speed |
 | **Map** | Leaflet map with vehicle markers, route polylines, skeleton loading |
 | **Event Log** | Color-coded real-time event stream (system/position/route/offline) |
@@ -241,10 +297,10 @@ Central TypeScript interfaces for vehicles, stops, and real-time event payloads.
 Typed Socket.io client service with room join/subscribe workflows. Handles `route:update`, `vehicle:position`, `vehicle:online`, and `vehicle:offline` events.
 
 ### `@logiflow/shared-auth`
-Token storage abstraction with JWT payload decode and expiration checks. Manages access + refresh token lifecycle.
+Token storage abstraction with JWT payload decode and expiration checks. Manages access + refresh token lifecycle. Provides `AUTH_TOKEN_KEY` constant and `AuthTokenService` class.
 
 ### `@logiflow/shared-maps`
-Haversine distance helpers and route distance fallback calculations for polyline points.
+Google Maps API loader, map creation helpers, Haversine distance calculations, and route distance fallback for polyline points.
 
 ---
 
@@ -255,6 +311,8 @@ Haversine distance helpers and route distance fallback calculations for polyline
 | `LOGIFLOW_API_BASE_URL` | `http://localhost:3002` | Gateway REST API base URL |
 | `LOGIFLOW_SOCKET_URL` | `http://localhost:3001` | Realtime WebSocket URL |
 | `LOGIFLOW_GOOGLE_MAPS_API_KEY` | `AIza...` | Google Maps API key |
+| `LOGIFLOW_ADMIN_APP_URL` | `http://localhost:8100` | Web admin URL (for role redirect) |
+| `LOGIFLOW_DRIVER_APP_URL` | `http://localhost:4200` | Mobile app URL (for role redirect) |
 
 ---
 
@@ -275,8 +333,9 @@ npm run typecheck
 
 | Backend Service | Frontend Usage | Connection |
 |----------------|----------------|------------|
-| **Gateway** `:3002` | Auth, vehicle/stop CRUD, route optimization | REST + JWT |
+| **Gateway** `:3002` | Auth (JWT + Google OAuth), vehicle/stop CRUD, route optimization, device registration | REST + JWT |
 | **Realtime** `:3001` | Live position, route updates, online/offline | Socket.io + JWT |
+| **Firebase** | Push notifications for route updates to mobile drivers | FCM SDK (Capacitor) |
 
 ### Socket.io Rooms
 

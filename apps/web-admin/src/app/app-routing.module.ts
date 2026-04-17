@@ -8,6 +8,10 @@ const routes: Routes = [
     loadChildren: () => import('./login/login.module').then(m => m.LoginPageModule),
   },
   {
+    path: 'auth/callback',
+    loadComponent: () => import('./auth-callback/auth-callback.component').then(m => m.AuthCallbackComponent),
+  },
+  {
     path: 'home',
     loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
     canActivate: [AuthGuard],

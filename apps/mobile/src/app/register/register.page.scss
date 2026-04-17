@@ -224,6 +224,62 @@ ion-content {
   }
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--lf-border);
+  }
+
+  span {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--lf-text-dim);
+  }
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  background: var(--lf-bg-base);
+  border: 1px solid var(--lf-border);
+  border-radius: 10px;
+  color: var(--lf-text);
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.2s;
+
+  &:hover {
+    border-color: var(--lf-text-muted);
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .google-icon {
+    flex-shrink: 0;
+  }
+}
+
 .auth-footer {
   margin-top: 24px;
   text-align: center;

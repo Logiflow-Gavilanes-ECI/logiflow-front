@@ -84,6 +84,10 @@ export class AuthService {
 		return (claims?.['userId'] as string) ?? claims?.sub ?? null;
 	}
 
+	async setTokenFromOAuth(token: string): Promise<void> {
+		await this.persistToken(token);
+	}
+
 	async logout(): Promise<void> {
 		this.tokenCache = null;
 		this.isTokenCacheHydrated = true;

@@ -67,6 +67,12 @@ export class LoginPage {
   dismissNetworkError(): void {
     this.networkError = null;
   }
+
+  signInWithGoogle(): void {
+    if (this.isSubmitting) return;
+    const apiUrl = environment.apiUrl;
+    globalThis.location.assign(`${apiUrl}/auth/google`);
+  }
   private async redirectByRole(role: string | null): Promise<void> {
     if (role === 'admin') {
       await this.router.navigate(['/home']);

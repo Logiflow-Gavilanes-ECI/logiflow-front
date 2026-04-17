@@ -193,6 +193,61 @@ ion-content {
   }
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0;
+
+  &__line {
+    flex: 1;
+    height: 1px;
+    background: var(--lf-border);
+  }
+
+  &__text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--lf-text-muted);
+  }
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--lf-bg-base);
+  border: 1px solid var(--lf-border);
+  border-radius: 10px;
+  color: var(--lf-text);
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: var(--lf-border-light);
+    background: var(--lf-bg-elevated);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+  }
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 32px 24px;

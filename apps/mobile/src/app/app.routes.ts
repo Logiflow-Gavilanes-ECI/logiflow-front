@@ -17,6 +17,10 @@ export const appRoutes: Routes = [
     component: RegisterPage,
   },
   {
+    path: 'auth/callback',
+    loadComponent: () => import('./auth-callback/auth-callback.component').then(m => m.AuthCallbackComponent),
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',

@@ -61,6 +61,22 @@ export class LoginPage {
     }
   }
 
+  async signInWithGoogle(): Promise<void> {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+    this.clearValidationErrors();
+
+    try {
+      const apiUrl = environment.apiBaseUrl;
+      const redirectUrl = `${apiUrl}/auth/google`;
+      globalThis.location.assign(redirectUrl);
+    } catch (error) {
+      this.handleSubmitError(error);
+    } finally {
+      this.isSubmitting = false;
+    }
+  }
+
   dismissNetworkError(): void {
     this.networkErrorMessage = null;
   }
