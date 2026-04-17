@@ -1,24 +1,50 @@
-/*
- * App Global CSS
- */
-
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
 
-/* Core CSS required for Ionic components to work properly */
 @import '@ionic/angular/css/core.css';
-
-/* Basic CSS for apps built with Ionic */
 @import '@ionic/angular/css/normalize.css';
 @import '@ionic/angular/css/structure.css';
 @import '@ionic/angular/css/typography.css';
 @import '@ionic/angular/css/display.css';
-
-/* Optional CSS utils */
 @import '@ionic/angular/css/padding.css';
 @import '@ionic/angular/css/float-elements.css';
 @import '@ionic/angular/css/text-alignment.css';
 @import '@ionic/angular/css/text-transformation.css';
 @import '@ionic/angular/css/flex-utils.css';
 
-/* Ionic theme variables */
 @import './theme/variables.scss';
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--lf-bg-deep);
+}
+
+ion-content {
+  --background: var(--lf-bg-base);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--lf-border);
+  border-radius: 2px;
+}
+
+::selection {
+  background: rgba(0, 229, 255, 0.25);
+  color: #fff;
+}
+
+ion-toolbar {
+  --background: var(--lf-bg-card);
+  --color: var(--lf-text);
+  --border-color: var(--lf-border);
+}

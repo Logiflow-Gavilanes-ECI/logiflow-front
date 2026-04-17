@@ -4,11 +4,13 @@
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #00e5ff;
+  color: var(--lf-cyan);
+  text-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
 }
 
 .logo-accent {
-  color: #ff6b35;
+  color: var(--lf-orange);
+  text-shadow: 0 0 20px rgba(255, 107, 53, 0.15);
 }
 
 ion-content {
@@ -18,7 +20,6 @@ ion-content {
   --padding-end: 0;
 }
 
-// Wrapper that gives the absolute-positioned error banner a reliable anchor
 .content-host {
   position: relative;
   height: 100%;
@@ -29,12 +30,12 @@ ion-content {
   grid-template-columns: 320px 1fr;
   height: 100%;
   overflow: hidden;
-  background: #080c14;
+  background: var(--lf-bg-base);
 }
 
 .sidebar {
-  background: #0d1420;
-  border-right: 1px solid #1a2540;
+  background: var(--lf-bg-card);
+  border-right: 1px solid var(--lf-border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -65,38 +66,42 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #1a0a0a;
-  border: 1px solid #ff1744;
-  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid var(--lf-red);
+  border-radius: 12px;
   padding: 12px 18px;
   max-width: calc(100% - 32px);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 24px rgba(239, 68, 68, 0.15);
 
   &__icon {
     font-size: 18px;
-    color: #ff1744;
+    color: var(--lf-red);
     flex-shrink: 0;
   }
 
   &__text {
     font-family: 'Space Mono', monospace;
     font-size: 12px;
-    color: #e8edf5;
+    color: var(--lf-text);
   }
 
   &__btn {
     background: transparent;
-    border: 1px solid #ff6b35;
-    border-radius: 6px;
-    color: #ff6b35;
+    border: 1px solid var(--lf-orange);
+    border-radius: 8px;
+    color: var(--lf-orange);
     font-family: 'Space Mono', monospace;
     font-size: 11px;
     padding: 6px 14px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, box-shadow 0.2s;
     flex-shrink: 0;
 
     &:hover {
       background: rgba(255, 107, 53, 0.15);
+      box-shadow: 0 0 12px rgba(255, 107, 53, 0.2);
     }
   }
 }
@@ -113,14 +118,12 @@ ion-content {
   }
 }
 
-// ─── Tablet 768 × 1024 ────────────────────────────────────────────────────────
 @media (max-width: 768px) {
   .dashboard-layout {
     grid-template-columns: 260px 1fr;
   }
 }
 
-// ─── Small screens (≤ 600px) — stack sidebar above map ───────────────────────
 @media (max-width: 600px) {
   .dashboard-layout {
     grid-template-columns: 1fr;
@@ -130,7 +133,7 @@ ion-content {
   .sidebar {
     height: 260px;
     border-right: none;
-    border-bottom: 1px solid #1a2540;
+    border-bottom: 1px solid var(--lf-border);
 
     app-vehicle-list {
       max-height: 60%;
