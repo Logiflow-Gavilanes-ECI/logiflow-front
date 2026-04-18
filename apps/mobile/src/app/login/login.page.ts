@@ -68,7 +68,7 @@ export class LoginPage {
 
     try {
       const apiUrl = environment.apiBaseUrl;
-      const redirectUrl = `${apiUrl}/auth/google`;
+      const redirectUrl = `${apiUrl}/auth/google?app=mobile`;
       globalThis.location.assign(redirectUrl);
     } catch (error) {
       this.handleSubmitError(error);

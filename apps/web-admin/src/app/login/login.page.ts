@@ -71,7 +71,7 @@ export class LoginPage {
   signInWithGoogle(): void {
     if (this.isSubmitting) return;
     const apiUrl = environment.apiUrl;
-    globalThis.location.assign(`${apiUrl}/auth/google`);
+    globalThis.location.assign(`${apiUrl}/auth/google?app=admin`);
   }
   private async redirectByRole(role: string | null): Promise<void> {
     if (role === 'admin') {
