@@ -176,6 +176,10 @@ export class RoutePage implements AfterViewInit {
     return TripStatusDisplayConstants[this.currentStatus];
   }
 
+  get completedCount(): number {
+    return this.routeSteps.filter((s) => s.status === 'completed').length;
+  }
+
   private async loadDriverRoute(): Promise<DriverRoute> {
     return this.routeService.getDriverRoute();
   }
@@ -235,11 +239,11 @@ export class RoutePage implements AfterViewInit {
 
   private async showRouteUpdateToast(): Promise<void> {
     const toast = await this.toastController.create({
-      message: 'Your route has been updated by the dispatcher.',
+      message: 'El despachador actualizó tu ruta.',
       duration: 3000,
       position: 'top',
       color: 'primary',
-      buttons: [{ text: 'View', role: 'info' }],
+      buttons: [{ text: 'Ver', role: 'info' }],
     });
 
     await toast.present();
