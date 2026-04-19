@@ -1,20 +1,32 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      <ion-icon [name]="routeIconName"></ion-icon>
-      Assigned Route
+      <span class="logo-text">Logi<span class="logo-accent">Flow</span></span>
+      <span class="header-sep">&mdash;</span>
+      <span class="header-sub">Ruta del conductor</span>
     </ion-title>
+    <div slot="end" class="route-badge" *ngIf="routeSteps.length > 0">
+      <ion-icon name="navigate-outline"></ion-icon>
+      <span>{{ routeSteps.length }} parada{{ routeSteps.length !== 1 ? 's' : '' }}</span>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="route-content" [fullscreen]="true">
-  <ion-toolbar [color]="currentStatusDisplay.color">
-    <ion-icon [name]="currentStatusDisplay.icon" slot="start"></ion-icon>
-    <ion-title>{{ currentStatusDisplay.label }}</ion-title>
-  </ion-toolbar>
+  <div class="status-bar" [class]="'status-bar--' + (currentStatus || 'idle')">
+    <div class="status-bar__inner">
+      <ion-icon [name]="currentStatusDisplay.icon" class="status-bar__icon"></ion-icon>
+      <span class="status-bar__label">{{ currentStatusDisplay.label }}</span>
+    </div>
+  </div>
 
   <div class="map-wrapper">
     <div id="map" #mapContainer class="map-container"></div>
+
+    <div class="map-empty-state" *ngIf="routeSteps.length === 0">
+      <ion-icon name="map-outline" class="map-empty__icon"></ion-icon>
+      <span class="map-empty__text">Sin ruta asignada</span>
+    </div>
   </div>
 
   <div class="status-actions-wrapper">
@@ -24,11 +36,18 @@
   </div>
 
   <div class="stop-list-wrapper">
+    <div class="stop-list-header">
+      <span class="stop-list-title">Paradas de entrega</span>
+      <span class="stop-list-progress" *ngIf="routeSteps.length > 0">
+        {{ completedCount }}/{{ routeSteps.length }} completadas
+      </span>
+    </div>
+
     <ion-list>
       <ion-item
         class="stop-item"
         [class.stop-item-active]="isActiveStep(step)"
-        [color]="isCompletedStep(step) ? 'light' : undefined"
+        [class.stop-item-completed]="isCompletedStep(step)"
         detail="false"
         button="true"
         *ngFor="let step of routeSteps"
@@ -39,7 +58,7 @@
           slot="start"
           class="arrival-badge"
           [style.background-color]="getStatusColor(step)">
-          {{ step.arrivalOrder }}
+          {{ isCompletedStep(step) ? '✓' : step.arrivalOrder }}
         </ion-badge>
 
         <ion-note class="stop-address">{{ step.address }}</ion-note>
@@ -53,5 +72,11 @@
         </ion-chip>
       </ion-item>
     </ion-list>
+
+    <div class="stop-list-empty" *ngIf="routeSteps.length === 0">
+      <ion-icon name="checkmark-circle-outline" class="stop-list-empty__icon"></ion-icon>
+      <span class="stop-list-empty__text">No hay paradas asignadas</span>
+      <span class="stop-list-empty__sub">El despachador asignará tu ruta en breve</span>
+    </div>
   </div>
 </ion-content>

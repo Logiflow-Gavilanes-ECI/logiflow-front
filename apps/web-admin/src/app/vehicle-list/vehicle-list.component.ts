@@ -22,6 +22,7 @@ export class VehicleListComponent implements OnInit, OnDestroy {
   vehicles: VehicleState[] = [];
   routeCount = 0;
   isLoading = true;
+  filterStatus: 'all' | 'online' | 'offline' = 'all';
 
   private readonly vehicleMap: Record<string, VehicleState> = {};
   private readonly subscriptions: Subscription[] = [];
@@ -33,6 +34,16 @@ export class VehicleListComponent implements OnInit, OnDestroy {
 
   get offlineCount(): number {
     return this.vehicles.filter((v) => v.isOffline).length;
+  }
+
+  get filteredVehicles(): VehicleState[] {
+    if (this.filterStatus === 'online') return this.vehicles.filter((v) => !v.isOffline);
+    if (this.filterStatus === 'offline') return this.vehicles.filter((v) => v.isOffline);
+    return this.vehicles;
+  }
+
+  setFilter(status: 'all' | 'online' | 'offline'): void {
+    this.filterStatus = status;
   }
 
   constructor(private readonly socketService: SocketService) {}

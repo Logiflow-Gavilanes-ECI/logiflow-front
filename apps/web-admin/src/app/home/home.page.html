@@ -2,8 +2,13 @@
   <ion-toolbar>
     <ion-title>
       <span class="logo-text">Logi<span class="logo-accent">Flow</span></span>
-      &mdash; Centro de Control
+      <span class="header-separator">&mdash;</span>
+      <span class="header-subtitle">Centro de Control</span>
     </ion-title>
+    <div slot="end" class="connection-status" [class.connected]="!socketError" [class.disconnected]="socketError">
+      <span class="status-dot" [class.pulse]="!socketError"></span>
+      <span class="status-label">{{ socketError ? 'Desconectado' : 'Conectado' }}</span>
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -21,8 +26,11 @@
 
     <div class="error-banner" *ngIf="socketError" role="alert">
       <ion-icon name="wifi-outline" class="error-banner__icon"></ion-icon>
-      <span class="error-banner__text">Conexión perdida con el servidor</span>
-      <button class="error-banner__btn" (click)="reconnect()">Reconectar</button>
+      <span class="error-banner__text">Conexión perdida — los datos pueden estar desactualizados</span>
+      <button class="error-banner__btn" (click)="reconnect()">
+        <ion-icon name="refresh-outline"></ion-icon>
+        Reconectar
+      </button>
     </div>
   </div>
 </ion-content>

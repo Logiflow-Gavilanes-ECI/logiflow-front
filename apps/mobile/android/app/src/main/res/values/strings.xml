@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LogiFlow</string>
+    <string name="title_activity_main">LogiFlow</string>
+    <string name="package_name">com.logiflow.mobile</string>
+    <string name="custom_url_scheme">com.logiflow.mobile</string>
+</resources>

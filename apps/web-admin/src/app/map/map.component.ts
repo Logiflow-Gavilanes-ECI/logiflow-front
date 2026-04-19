@@ -12,6 +12,13 @@ interface RouteToastData {
   eventType: string | null;
 }
 
+interface VehicleData {
+  lat: number;
+  lng: number;
+  speed: number;
+  isOffline: boolean;
+}
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -24,7 +31,9 @@ export class MapComponent implements OnInit, OnDestroy {
   private map!: google.maps.Map;
   private readonly markers: Record<string, google.maps.Marker> = {};
   private readonly polylines: Record<string, google.maps.Polyline> = {};
+  private readonly vehicleData: Record<string, VehicleData> = {};
   private readonly subscriptions: Subscription[] = [];
+  private activeInfoWindow: google.maps.InfoWindow | null = null;
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
   private loadingTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -89,7 +98,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.socketService.onVehiclePosition().subscribe((data: VehiclePositionEvent) => {
         this.stopLoading();
-        this.updateOrCreateMarker(data.vehicleId, data.lat, data.lng, false);
+        this.updateOrCreateMarker(data.vehicleId, data.lat, data.lng, false, data.speed);
       }),
       this.socketService.onRouteUpdate().subscribe((data: RouteUpdateEvent) => {
         const points = data.polyline.map((p) => ({ lat: (p as unknown as { lat: number }).lat, lng: (p as unknown as { lng: number }).lng }));
@@ -117,7 +126,15 @@ export class MapComponent implements OnInit, OnDestroy {
     };
   }
 
-  private updateOrCreateMarker(vehicleId: string, lat: number | null, lng: number | null, isOffline: boolean): void {
+  private updateOrCreateMarker(vehicleId: string, lat: number | null, lng: number | null, isOffline: boolean, speed?: number): void {
+    const prev = this.vehicleData[vehicleId];
+    this.vehicleData[vehicleId] = {
+      lat: lat ?? prev?.lat ?? 0,
+      lng: lng ?? prev?.lng ?? 0,
+      speed: speed ?? prev?.speed ?? 0,
+      isOffline,
+    };
+
     if (this.markers[vehicleId]) {
       if (lat !== null && lng !== null) {
         this.markers[vehicleId].setPosition({ lat, lng });
@@ -132,8 +149,38 @@ export class MapComponent implements OnInit, OnDestroy {
         icon: this.buildMarkerIcon(isOffline),
         label: { text: vehicleId, color: '#e8edf5', fontSize: '10px', fontFamily: 'Space Mono' },
       });
-      this.markers[vehicleId].addListener('click', () => this.focusVehicle(vehicleId));
+      this.markers[vehicleId].addListener('click', () => this.openInfoWindow(vehicleId));
     }
+  }
+
+  private openInfoWindow(vehicleId: string): void {
+    if (this.activeInfoWindow) {
+      this.activeInfoWindow.close();
+    }
+
+    const data = this.vehicleData[vehicleId];
+    const marker = this.markers[vehicleId];
+    if (!data || !marker) return;
+
+    const statusLabel = data.isOffline ? 'OFFLINE' : 'EN LÍNEA';
+    const statusColor = data.isOffline ? '#ef4444' : '#22c55e';
+    const content = `
+      <div style="background:#0d1420;border:1px solid #1a2540;border-radius:8px;padding:12px 14px;min-width:180px;font-family:'Space Mono',monospace;">
+        <div style="font-size:13px;font-weight:700;color:#00e5ff;letter-spacing:1px;margin-bottom:8px;">${vehicleId}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block;"></span>
+          <span style="font-size:10px;color:${statusColor};letter-spacing:0.5px;">${statusLabel}</span>
+        </div>
+        <div style="font-size:11px;color:#64748b;line-height:1.8;">
+          <div>Lat <span style="color:#e8edf5;">${data.lat.toFixed(5)}</span></div>
+          <div>Lng <span style="color:#e8edf5;">${data.lng.toFixed(5)}</span></div>
+          <div>Vel <span style="color:#e8edf5;">${data.speed} km/h</span></div>
+        </div>
+      </div>`;
+
+    this.activeInfoWindow = new google.maps.InfoWindow({ content });
+    this.activeInfoWindow.open(this.map, marker);
+    this.map.panTo(marker.getPosition()!);
   }
 
   focusVehicle(vehicleId: string): void {
@@ -142,6 +189,7 @@ export class MapComponent implements OnInit, OnDestroy {
     const pos = marker.getPosition();
     if (pos) this.map.panTo(pos);
     this.map.setZoom(16);
+    this.openInfoWindow(vehicleId);
   }
 
   private drawPolyline(vehicleId: string, points: google.maps.LatLngLiteral[]): void {

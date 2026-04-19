@@ -4,14 +4,110 @@
 
 ion-header ion-toolbar {
   --background: var(--lf-bg-card);
-  --color: var(--lf-cyan);
+  --color: var(--lf-text);
   --border-color: var(--lf-border);
 
   ion-title {
     font-family: 'Space Mono', monospace;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 1px;
+  }
+}
+
+.logo-text {
+  color: var(--lf-cyan);
+  text-shadow: 0 0 16px rgba(0, 229, 255, 0.2);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.logo-accent {
+  color: var(--lf-orange);
+  text-shadow: 0 0 16px rgba(255, 107, 53, 0.2);
+}
+
+.header-sep {
+  color: var(--lf-border-light);
+  margin: 0 5px;
+  font-weight: 300;
+}
+
+.header-sub {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--lf-text-muted);
+  text-transform: uppercase;
+}
+
+.route-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px 3px 8px;
+  margin-right: 8px;
+  border-radius: 12px;
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  color: var(--lf-cyan);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+
+  ion-icon {
+    font-size: 12px;
+  }
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--lf-border);
+  transition: background 0.3s;
+
+  &--en_camino {
+    background: rgba(34, 197, 94, 0.08);
+    border-color: rgba(34, 197, 94, 0.2);
+    .status-bar__icon, .status-bar__label { color: var(--lf-green); }
+  }
+
+  &--en_parada {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.2);
+    .status-bar__icon, .status-bar__label { color: #f59e0b; }
+  }
+
+  &--entregado {
+    background: rgba(34, 158, 217, 0.08);
+    border-color: rgba(34, 158, 217, 0.2);
+    .status-bar__icon, .status-bar__label { color: var(--ion-color-primary); }
+  }
+
+  &--idle {
+    background: var(--lf-bg-card);
+    .status-bar__icon, .status-bar__label { color: var(--lf-text-muted); }
+  }
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__icon {
+    font-size: 16px;
+    transition: color 0.3s;
+  }
+
+  &__label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.3s;
   }
 }
 
@@ -61,6 +157,89 @@ ion-header ion-toolbar {
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
+.stop-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 6px;
+  border-bottom: 1px solid var(--lf-border);
+}
+
+.stop-list-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lf-text-muted);
+}
+
+.stop-list-progress {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--lf-cyan);
+  background: rgba(0, 229, 255, 0.06);
+  border: 1px solid rgba(0, 229, 255, 0.15);
+  border-radius: 10px;
+  padding: 2px 8px;
+}
+
+.stop-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  text-align: center;
+
+  &__icon {
+    font-size: 40px;
+    color: var(--lf-border-light);
+  }
+
+  &__text {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--lf-border-light);
+    letter-spacing: 1px;
+  }
+
+  &__sub {
+    font-size: 11px;
+    color: var(--lf-border);
+    line-height: 1.5;
+    max-width: 220px;
+  }
+}
+
+.map-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--lf-bg-base);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.map-empty__icon {
+  font-size: 48px;
+  color: var(--lf-border);
+}
+
+.map-empty__text {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lf-text-muted);
+}
+
 ion-list {
   background: transparent;
   padding: 0;
@@ -87,6 +266,16 @@ ion-list {
     bottom: 0;
     width: 3px;
     background: var(--lf-gradient-primary);
+  }
+}
+
+.stop-item-completed {
+  --background: rgba(13, 20, 32, 0.5);
+  opacity: 0.65;
+
+  .stop-address {
+    text-decoration: line-through;
+    color: var(--lf-text-muted);
   }
 }
 
