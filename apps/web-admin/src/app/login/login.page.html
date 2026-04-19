@@ -8,69 +8,13 @@
 
       <div class="network-error" *ngIf="networkError" role="alert">
         <span class="network-error__text">{{ networkError }}</span>
-        <button type="button" class="network-error__btn" (click)="dismissNetworkError()" aria-label="Cerrar alerta">✕</button>
+        <button type="button" class="network-error__btn" (click)="dismissNetworkError()" aria-label="Cerrar alerta">&#10005;</button>
       </div>
 
       <p class="form-error" *ngIf="formError" role="alert">{{ formError }}</p>
 
-      <form #loginForm="ngForm" class="login-form" (ngSubmit)="onSubmit(loginForm)" novalidate>
-        <div class="field">
-          <label class="field__label" for="email">Correo electrónico</label>
-          <input
-            id="email"
-            class="field__input"
-            type="email"
-            [(ngModel)]="email"
-            #emailModel="ngModel"
-            name="email"
-            autocomplete="email"
-            placeholder="admin@logiflow.app"
-            email
-            required
-            (ngModelChange)="onFieldChanged('email')"
-          />
-          <span class="field__error" *ngIf="showControlError(emailModel, 'required')">
-            El correo es obligatorio.
-          </span>
-          <span class="field__error" *ngIf="showControlError(emailModel, 'email')">
-            Ingresa un correo válido.
-          </span>
-          <span class="field__error" *ngIf="fieldErrors.email">{{ fieldErrors.email }}</span>
-        </div>
-
-        <div class="field">
-          <label class="field__label" for="password">Contraseña</label>
-          <input
-            id="password"
-            class="field__input"
-            type="password"
-            [(ngModel)]="password"
-            #passwordModel="ngModel"
-            name="password"
-            autocomplete="current-password"
-            placeholder="••••••••"
-            minlength="6"
-            required
-            (ngModelChange)="onFieldChanged('password')"
-          />
-          <span class="field__error" *ngIf="showControlError(passwordModel, 'required')">
-            La contraseña es obligatoria.
-          </span>
-          <span class="field__error" *ngIf="showControlError(passwordModel, 'minlength')">
-            Mínimo 6 caracteres.
-          </span>
-          <span class="field__error" *ngIf="fieldErrors.password">{{ fieldErrors.password }}</span>
-        </div>
-
-        <button class="login-btn" type="submit" [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Ingresando...' : 'Ingresar' }}
-        </button>
-
-        <div class="divider">
-          <span class="divider__line"></span>
-          <span class="divider__text">o</span>
-          <span class="divider__line"></span>
-        </div>
+      <div class="login-actions">
+        <p class="login-hint">Inicia sesión con tu cuenta de Google para acceder al panel de control.</p>
 
         <button
           type="button"
@@ -86,7 +30,7 @@
           </svg>
           Continuar con Google
         </button>
-      </form>
+      </div>
     </div>
   </div>
 </ion-content>
