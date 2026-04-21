@@ -1,6 +1,6 @@
 export const StatusIconConstants = {
-  enCamino: 'car-outline',
-  enParada: 'location-outline',
+  inTransit: 'car-outline',
+  atStop: 'location-outline',
   completed: 'checkmark-circle-outline',
   pending: 'ellipse-outline',
   alert: 'alert-circle-outline',

@@ -50,7 +50,7 @@ interface RouteStatusDisplay {
 }
 
 const NeutralRouteStatusDisplay: RouteStatusDisplay = {
-  label: 'Ruta asignada',
+  label: 'Route assigned',
   color: 'medium',
   icon: NavIconConstants.route,
 };
@@ -135,7 +135,7 @@ export class RoutePage implements AfterViewInit {
       activeStop?.stopId ?? null,
     );
 
-    if (newStatus === TripStatusConstants.entregado) {
+    if (newStatus === TripStatusConstants.delivered) {
       this.advanceActiveStopToNext();
     }
   }
@@ -154,7 +154,7 @@ export class RoutePage implements AfterViewInit {
     }
 
     if (step.status === 'active') {
-      return StatusIconConstants.enCamino;
+      return StatusIconConstants.inTransit;
     }
 
     return StatusIconConstants.pending;
@@ -239,11 +239,11 @@ export class RoutePage implements AfterViewInit {
 
   private async showRouteUpdateToast(): Promise<void> {
     const toast = await this.toastController.create({
-      message: 'El despachador actualizó tu ruta.',
+      message: 'The dispatcher updated your route.',
       duration: 3000,
       position: 'top',
       color: 'primary',
-      buttons: [{ text: 'Ver', role: 'info' }],
+      buttons: [{ text: 'View', role: 'info' }],
     });
 
     await toast.present();

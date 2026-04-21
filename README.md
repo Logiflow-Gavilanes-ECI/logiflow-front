@@ -359,4 +359,4 @@ npm run typecheck
 
 ## 📄 License
 
-MIT © 2026 LogiFlow — Escuela Colombiana de Ingeniería Julio Garavito
+MIT © 2026 LogiFlow — Escuela Colombiana de Ingenieria Julio Garavito

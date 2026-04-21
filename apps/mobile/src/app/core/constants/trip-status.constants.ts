@@ -1,9 +1,9 @@
 import { StatusIconConstants } from './icons.constants';
 
 export const TripStatusConstants = {
-  enCamino: 'en_camino',
-  enParada: 'en_parada',
-  entregado: 'entregado',
+  inTransit: 'in_transit',
+  atStop: 'at_stop',
+  delivered: 'delivered',
 } as const;
 
 export type TripStatus =
@@ -13,18 +13,18 @@ export const TripStatusDisplayConstants: Record<
   TripStatus,
   { label: string; color: string; icon: string }
 > = {
-  en_camino: {
-    label: 'En camino',
+  in_transit: {
+    label: 'In transit',
     color: 'success',
-    icon: StatusIconConstants.enCamino,
+    icon: StatusIconConstants.inTransit,
   },
-  en_parada: {
-    label: 'En parada',
+  at_stop: {
+    label: 'At stop',
     color: 'warning',
-    icon: StatusIconConstants.enParada,
+    icon: StatusIconConstants.atStop,
   },
-  entregado: {
-    label: 'Entregado',
+  delivered: {
+    label: 'Delivered',
     color: 'primary',
     icon: StatusIconConstants.completed,
   },

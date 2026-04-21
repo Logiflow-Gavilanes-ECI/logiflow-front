@@ -3,11 +3,11 @@
     <ion-title>
       <span class="logo-text">Logi<span class="logo-accent">Flow</span></span>
       <span class="header-sep">&mdash;</span>
-      <span class="header-sub">Ruta del conductor</span>
+      <span class="header-sub">Driver Route</span>
     </ion-title>
     <div slot="end" class="route-badge" *ngIf="routeSteps.length > 0">
       <ion-icon name="navigate-outline"></ion-icon>
-      <span>{{ routeSteps.length }} parada{{ routeSteps.length !== 1 ? 's' : '' }}</span>
+      <span>{{ routeSteps.length }} stop{{ routeSteps.length !== 1 ? 's' : '' }}</span>
     </div>
   </ion-toolbar>
 </ion-header>
@@ -25,7 +25,7 @@
 
     <div class="map-empty-state" *ngIf="routeSteps.length === 0">
       <ion-icon name="map-outline" class="map-empty__icon"></ion-icon>
-      <span class="map-empty__text">Sin ruta asignada</span>
+      <span class="map-empty__text">No route assigned</span>
     </div>
   </div>
 
@@ -37,9 +37,9 @@
 
   <div class="stop-list-wrapper">
     <div class="stop-list-header">
-      <span class="stop-list-title">Paradas de entrega</span>
+      <span class="stop-list-title">Delivery Stops</span>
       <span class="stop-list-progress" *ngIf="routeSteps.length > 0">
-        {{ completedCount }}/{{ routeSteps.length }} completadas
+        {{ completedCount }}/{{ routeSteps.length }} completed
       </span>
     </div>
 
@@ -75,8 +75,8 @@
 
     <div class="stop-list-empty" *ngIf="routeSteps.length === 0">
       <ion-icon name="checkmark-circle-outline" class="stop-list-empty__icon"></ion-icon>
-      <span class="stop-list-empty__text">No hay paradas asignadas</span>
-      <span class="stop-list-empty__sub">El despachador asignará tu ruta en breve</span>
+      <span class="stop-list-empty__text">No stops assigned</span>
+      <span class="stop-list-empty__sub">The dispatcher will assign your route shortly</span>
     </div>
   </div>
 </ion-content>

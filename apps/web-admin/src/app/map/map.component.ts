@@ -162,7 +162,7 @@ export class MapComponent implements OnInit, OnDestroy {
     const marker = this.markers[vehicleId];
     if (!data || !marker) return;
 
-    const statusLabel = data.isOffline ? 'OFFLINE' : 'EN LÍNEA';
+    const statusLabel = data.isOffline ? 'OFFLINE' : 'ONLINE';
     const statusColor = data.isOffline ? '#ef4444' : '#22c55e';
     const content = `
       <div style="background:#0d1420;border:1px solid #1a2540;border-radius:8px;padding:12px 14px;min-width:180px;font-family:'Space Mono',monospace;">
@@ -174,7 +174,7 @@ export class MapComponent implements OnInit, OnDestroy {
         <div style="font-size:11px;color:#64748b;line-height:1.8;">
           <div>Lat <span style="color:#e8edf5;">${data.lat.toFixed(5)}</span></div>
           <div>Lng <span style="color:#e8edf5;">${data.lng.toFixed(5)}</span></div>
-          <div>Vel <span style="color:#e8edf5;">${data.speed} km/h</span></div>
+          <div>Speed <span style="color:#e8edf5;">${data.speed} km/h</span></div>
         </div>
       </div>`;
 

@@ -4,7 +4,7 @@
       <span class="status-dot-inner"></span>
     </div>
     <span class="status-indicator__label">
-      {{ currentStatus ? tripStatusDisplayConstants[currentStatus].label : 'Sin iniciar' }}
+      {{ currentStatus ? tripStatusDisplayConstants[currentStatus].label : 'Not started' }}
     </span>
   </div>
 
@@ -12,34 +12,34 @@
     <ion-button
       expand="block"
       fill="solid"
-      [color]="tripStatusDisplayConstants[tripStatusConstants.enCamino].color"
-      [disabled]="isIniciarDisabled() || isProcessing"
-      (click)="emitIniciar()">
-      <ion-spinner *ngIf="isProcessing && pendingStatus === tripStatusConstants.enCamino" name="crescent" slot="start"></ion-spinner>
-      <ion-icon *ngIf="!(isProcessing && pendingStatus === tripStatusConstants.enCamino)" slot="start" [name]="statusIconConstants.enCamino"></ion-icon>
-      Iniciar
+      [color]="tripStatusDisplayConstants[tripStatusConstants.inTransit].color"
+      [disabled]="isStartDisabled() || isProcessing"
+      (click)="emitStart()">
+      <ion-spinner *ngIf="isProcessing && pendingStatus === tripStatusConstants.inTransit" name="crescent" slot="start"></ion-spinner>
+      <ion-icon *ngIf="!(isProcessing && pendingStatus === tripStatusConstants.inTransit)" slot="start" [name]="statusIconConstants.inTransit"></ion-icon>
+      Start
     </ion-button>
 
     <ion-button
       expand="block"
       fill="solid"
-      [color]="tripStatusDisplayConstants[tripStatusConstants.enParada].color"
-      [disabled]="isLlegueDisabled() || isProcessing"
-      (click)="emitLlegue()">
-      <ion-spinner *ngIf="isProcessing && pendingStatus === tripStatusConstants.enParada" name="crescent" slot="start"></ion-spinner>
-      <ion-icon *ngIf="!(isProcessing && pendingStatus === tripStatusConstants.enParada)" slot="start" [name]="statusIconConstants.enParada"></ion-icon>
-      Llegué
+      [color]="tripStatusDisplayConstants[tripStatusConstants.atStop].color"
+      [disabled]="isArrivedDisabled() || isProcessing"
+      (click)="emitArrived()">
+      <ion-spinner *ngIf="isProcessing && pendingStatus === tripStatusConstants.atStop" name="crescent" slot="start"></ion-spinner>
+      <ion-icon *ngIf="!(isProcessing && pendingStatus === tripStatusConstants.atStop)" slot="start" [name]="statusIconConstants.atStop"></ion-icon>
+      Arrived
     </ion-button>
 
     <ion-button
       expand="block"
       fill="solid"
-      [color]="tripStatusDisplayConstants[tripStatusConstants.entregado].color"
-      [disabled]="isEntregueDisabled() || isProcessing"
-      (click)="emitEntregue()">
-      <ion-spinner *ngIf="isProcessing && pendingStatus === tripStatusConstants.entregado" name="crescent" slot="start"></ion-spinner>
-      <ion-icon *ngIf="!(isProcessing && pendingStatus === tripStatusConstants.entregado)" slot="start" [name]="statusIconConstants.completed"></ion-icon>
-      Entregué
+      [color]="tripStatusDisplayConstants[tripStatusConstants.delivered].color"
+      [disabled]="isDeliveredDisabled() || isProcessing"
+      (click)="emitDelivered()">
+      <ion-spinner *ngIf="isProcessing && pendingStatus === tripStatusConstants.delivered" name="crescent" slot="start"></ion-spinner>
+      <ion-icon *ngIf="!(isProcessing && pendingStatus === tripStatusConstants.delivered)" slot="start" [name]="statusIconConstants.completed"></ion-icon>
+      Delivered
     </ion-button>
   </div>
 </div>
