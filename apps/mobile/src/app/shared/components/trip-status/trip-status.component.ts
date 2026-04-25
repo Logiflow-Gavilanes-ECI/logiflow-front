@@ -29,31 +29,31 @@ export class TripStatusComponent {
 
   private readonly cdr = inject(ChangeDetectorRef);
 
-  emitIniciar(): void {
-    if (this.isIniciarDisabled() || this.isProcessing) return;
-    this.triggerWithLoader(TripStatusConstants.enCamino);
+  emitStart(): void {
+    if (this.isStartDisabled() || this.isProcessing) return;
+    this.triggerWithLoader(TripStatusConstants.inTransit);
   }
 
-  emitLlegue(): void {
-    if (this.isLlegueDisabled() || this.isProcessing) return;
-    this.triggerWithLoader(TripStatusConstants.enParada);
+  emitArrived(): void {
+    if (this.isArrivedDisabled() || this.isProcessing) return;
+    this.triggerWithLoader(TripStatusConstants.atStop);
   }
 
-  emitEntregue(): void {
-    if (this.isEntregueDisabled() || this.isProcessing) return;
-    this.triggerWithLoader(TripStatusConstants.entregado);
+  emitDelivered(): void {
+    if (this.isDeliveredDisabled() || this.isProcessing) return;
+    this.triggerWithLoader(TripStatusConstants.delivered);
   }
 
-  isIniciarDisabled(): boolean {
-    return this.currentStatus === TripStatusConstants.enCamino;
+  isStartDisabled(): boolean {
+    return this.currentStatus === TripStatusConstants.inTransit;
   }
 
-  isLlegueDisabled(): boolean {
-    return this.currentStatus !== TripStatusConstants.enCamino;
+  isArrivedDisabled(): boolean {
+    return this.currentStatus !== TripStatusConstants.inTransit;
   }
 
-  isEntregueDisabled(): boolean {
-    return this.currentStatus !== TripStatusConstants.enParada;
+  isDeliveredDisabled(): boolean {
+    return this.currentStatus !== TripStatusConstants.atStop;
   }
 
   private triggerWithLoader(status: TripStatus): void {
