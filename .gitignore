@@ -11,5 +11,7 @@ coverage/
 
 # Local environment overrides — put your API keys here, never commit
 apps/web-admin/src/environments/environment.local.ts
+apps/web-admin/src/environments/environment.prod.ts
+apps/web-admin/.env
 
 CLAUDE.md
