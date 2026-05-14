@@ -25,13 +25,16 @@ export class VehicleService {
         ? new HttpHeaders({ Authorization: `Bearer ${token}` })
         : new HttpHeaders();
 
-      return await firstValueFrom(
-        this.httpClient.get<VehicleDetails>(
-          `${environment.apiBaseUrl}/api/v1/vehicles/${encodeURIComponent(vehicleId)}`,
-          { headers },
-        ),
+      const url = `${environment.apiBaseUrl}/vehicles/${encodeURIComponent(vehicleId)}`;
+      console.log(`[VehicleService] GET ${url}`);
+      const result = await firstValueFrom(
+        this.httpClient.get<VehicleDetails>(url, { headers }),
       );
-    } catch {
+      console.log(`[VehicleService] response: ${JSON.stringify(result)}`);
+      return result;
+    } catch (error) {
+      const e = error as Record<string, unknown>;
+      console.error(`[VehicleService] failed — status: ${JSON.stringify(e?.['status'])} message: ${JSON.stringify(e?.['message'])} error: ${JSON.stringify(e?.['error'])}`);
       return null;
     }
   }

@@ -182,7 +182,7 @@ function mapStopPayloadToRouteStep(step: RouteStopPayload, index: number): Route
   const arrivalOrder = Number(step.arrivalOrder ?? step.order ?? index + 1);
   return {
     stopId: step.stopId ?? step.id ?? `stop-${index + 1}`,
-    address: step.address ?? 'Address unavailable',
+    address: step.address || 'Address unavailable',
     lat: Number(step.lat ?? 0),
     lng: Number(step.lng ?? 0),
     arrivalOrder,

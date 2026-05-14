@@ -95,7 +95,7 @@ export class RouteService {
 
     return {
       stopId,
-      address: step.address ?? 'Address unavailable',
+      address: step.address || 'Address unavailable',
       lat: Number(step.lat ?? 0),
       lng: Number(step.lng ?? 0),
       arrivalOrder,
