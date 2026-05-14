@@ -29,6 +29,11 @@ export class AuthService {
 		return (claims?.['userId'] as string) ?? claims?.sub ?? null;
 	}
 
+	async getVehicleId(): Promise<string | null> {
+		const claims = await this.getClaims();
+		return (claims?.['vehicleId'] as string) ?? null;
+	}
+
 	async setTokenFromOAuth(token: string): Promise<void> {
 		await this.persistToken(token);
 	}

@@ -63,7 +63,8 @@ export class PushNotificationService {
       this.registered = true;
       console.log('[push] Device registered with backend');
     } catch (error) {
-      console.error('[push] Failed to register device:', error);
+      const e = error as Record<string, unknown>;
+      console.error(`[push] Failed to register device — status: ${e?.['status']} url: ${e?.['url']} message: ${e?.['message']} error: ${JSON.stringify(e?.['error'])}`);
     }
   }
 

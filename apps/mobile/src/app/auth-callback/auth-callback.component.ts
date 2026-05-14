@@ -19,21 +19,23 @@ export class AuthCallbackComponent implements OnInit {
     private readonly authService: AuthService,
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    const params = this.route.snapshot.queryParamMap;
-    const accessToken = params.get('accessToken');
-    const role = params.get('role');
+  ngOnInit(): void {
+    void this.handleCallback();
+  }
 
-    if (!accessToken) {
+  private async handleCallback(): Promise<void> {
+    const params = this.route.snapshot.queryParamMap;
+    const token = params.get('token') ?? params.get('accessToken');
+
+    if (!token) {
       await this.router.navigate(['/login']);
       return;
     }
 
-    await this.authService.setTokenFromOAuth(accessToken);
+    await this.authService.setTokenFromOAuth(token);
+    const role = await this.authService.getRole();
 
-    if (role === 'conductor') {
-      await this.router.navigate(['/route']);
-    } else if (role === 'admin') {
+    if (role === 'admin') {
       globalThis.location.assign(environment.adminAppUrl);
     } else {
       await this.router.navigate(['/route']);

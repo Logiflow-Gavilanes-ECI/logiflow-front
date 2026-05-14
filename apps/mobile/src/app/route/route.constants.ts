@@ -32,3 +32,26 @@ export const RouteStatusLabelConstants: Record<RouteStepStatus, string> = {
 export const RouteApiConstants = {
   DriverRoutePathTemplate: '/vehicles/{vehicleId}/route',
 } as const;
+
+export const DarkMapStyles: google.maps.MapTypeStyle[] = [
+  { elementType: 'geometry', stylers: [{ color: '#0d1117' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#0d1117' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#8b949e' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1e2a3a' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#0d1117' }] },
+  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#6b7280' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#2d3f56' }] },
+  { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#0d1117' }] },
+  { featureType: 'road.highway', elementType: 'labels.text.fill', stylers: [{ color: '#00e5ff' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0a1628' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#229ed9' }] },
+  { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#111827' }] },
+  { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#4b5563' }] },
+  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#0d2016' }] },
+  { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{ color: '#22c55e' }] },
+  { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#111827' }] },
+  { featureType: 'transit.station', elementType: 'labels.text.fill', stylers: [{ color: '#6b7280' }] },
+  { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#374151' }] },
+  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#9ca3af' }] },
+  { featureType: 'administrative.neighborhood', elementType: 'labels.text.fill', stylers: [{ color: '#6b7280' }] },
+];

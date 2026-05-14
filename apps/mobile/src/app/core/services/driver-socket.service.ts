@@ -154,6 +154,7 @@ export class DriverSocketService {
   }
 
   private handleRouteUpdateEvent(payload: RouteUpdatePayload): void {
+    console.log(`[socket] route:update received — vehicleId: ${payload.vehicleId ?? 'n/a'} stops: ${payload.stops?.length ?? 0}`);
     const normalizedRoute = normalizeRouteUpdatePayload(
       payload,
       this.activeVehicleId ?? '',

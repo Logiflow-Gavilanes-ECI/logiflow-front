@@ -288,6 +288,113 @@ npm run build
 
 ---
 
+## 📦 Building the Android APK
+
+This section documents how to generate a debug APK for the mobile driver app from scratch.
+
+### Prerequisites
+
+| Tool | Version | Download |
+|------|---------|----------|
+| Node.js | 22+ | [nodejs.org](https://nodejs.org/) |
+| Android Studio | Meerkat (2024.3) or later | [developer.android.com/studio](https://developer.android.com/studio) |
+| JDK | 17+ | Bundled with Android Studio |
+| Android SDK | API 33 (Android 13) or higher | Via Android Studio SDK Manager |
+
+> **Note:** Android Studio includes its own JDK. Make sure the `JAVA_HOME` environment variable points to it if you have multiple JDKs installed.
+
+### Step 1 — Install dependencies
+
+From the monorepo root:
+
+```bash
+npm install
+```
+
+### Step 2 — Configure environment for production
+
+The file `apps/mobile/src/environments/environment.prod.ts` is **not committed** (it contains API keys). Create it with:
+
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'https://logiflow-api.eastus2.cloudapp.azure.com',
+  socketUrl: 'https://logiflow-api.eastus2.cloudapp.azure.com',
+  googleMapsApiKey: '<YOUR_GOOGLE_MAPS_API_KEY>',
+};
+```
+
+Also place `apps/mobile/android/app/google-services.json` (obtained from Firebase Console — not committed to the repo).
+
+### Step 3 — Build the Angular app for production
+
+```bash
+cd apps/mobile
+npx ng build --configuration=production
+```
+
+This generates the compiled web assets in `apps/mobile/www/`.
+
+### Step 4 — Sync with Capacitor
+
+```bash
+npx cap sync android
+```
+
+This copies the `www/` build into the native Android project and updates Capacitor plugins.
+
+### Step 5 — Open in Android Studio
+
+```bash
+npx cap open android
+```
+
+Android Studio opens the project at `apps/mobile/android/`.
+
+### Step 6 — Compile the APK
+
+In Android Studio:
+
+1. Wait for Gradle sync to finish (bottom status bar shows "Sync finished").
+2. Select **Build → Build Bundle(s) / APK(s) → Build APK(s)**.
+3. Android Studio will notify you when the build completes.
+
+### Step 7 — Locate the APK
+
+The debug APK is generated at:
+
+```
+apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Click **"locate"** in the Android Studio notification or navigate there directly.
+
+### Step 8 — Install on emulator or device
+
+**Emulator:** drag and drop the APK onto the running emulator window, or:
+
+```bash
+adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+**Physical device:** enable USB Debugging, connect via USB, then run the same `adb install` command.
+
+### OAuth (Google Sign-In) — Android notes
+
+The mobile app uses [`@capacitor/browser`](https://capacitorjs.com/docs/apis/browser) to open the Google OAuth flow in Chrome (external browser). After authorization, Google redirects to the deep link `logiflow://callback?token=<JWT>`, which Android forwards back to the app.
+
+For Google OAuth to work on Android you need:
+- The SHA-1 fingerprint of your signing keystore registered in [Google Cloud Console](https://console.cloud.google.com/) under **APIs & Services → Credentials → OAuth 2.0 Client IDs → Android**.
+- `google-services.json` containing the correct `client_id` placed at `apps/mobile/android/app/google-services.json`.
+
+To get the debug keystore SHA-1:
+
+```bash
+keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+---
+
 ## 📚 Shared Libraries
 
 ### `@logiflow/shared-models`

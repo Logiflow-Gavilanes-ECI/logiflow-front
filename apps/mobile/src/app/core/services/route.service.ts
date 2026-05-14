@@ -49,6 +49,11 @@ export class RouteService {
   }
 
   private async resolveVehicleId(): Promise<string> {
+    const vehicleId = await this.authService.getVehicleId();
+    if (typeof vehicleId === 'string' && vehicleId.trim().length > 0) {
+      return vehicleId;
+    }
+
     const userId = await this.authService.getUserId();
     if (typeof userId === 'string' && userId.trim().length > 0) {
       return userId;
