@@ -39,6 +39,9 @@ import {
   notificationsOutline,
   personOutline,
   logOutOutline,
+  wifiOutline,
+  refreshOutline,
+  closeOutline,
 } from 'ionicons/icons';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MapsService } from '@logiflow/shared-maps';
@@ -122,6 +125,7 @@ export class RoutePage implements AfterViewInit {
 
   activeTab: ActiveTab = 'map';
   isPanelExpanded = false;
+  socketError: string | null = null;
   currentStatus: TripStatus | null = null;
   unreadAlerts = 0;
   driverEmail = '';
@@ -161,8 +165,10 @@ export class RoutePage implements AfterViewInit {
       ellipseOutline, alertCircleOutline,
       chevronUpOutline, chevronDownOutline,
       listOutline, notificationsOutline, personOutline, logOutOutline,
+      wifiOutline, refreshOutline, closeOutline,
     });
     this.subscribeToSocketRouteUpdates();
+    this.subscribeToSocketErrors();
   }
 
   ionViewWillEnter(): void {
@@ -233,6 +239,17 @@ export class RoutePage implements AfterViewInit {
     await this.router.navigate(['/login']);
   }
 
+  async reconnect(): Promise<void> {
+    this.socketError = null;
+    this.cdr.markForCheck();
+    await this.loadAndRenderRoute();
+  }
+
+  dismissSocketError(): void {
+    this.socketError = null;
+    this.cdr.markForCheck();
+  }
+
   getStatusLabel(step: RouteStep): string { return RouteStatusLabelConstants[step.status]; }
   getStatusColor(step: RouteStep): string { return MarkerColorConstants[step.status]; }
 
@@ -291,6 +308,20 @@ export class RoutePage implements AfterViewInit {
       this.updateRouteState({ vehicleId: '', steps: [] });
       this.renderRoute();
     }
+  }
+
+  private subscribeToSocketErrors(): void {
+    this.driverSocketService.error$
+      .pipe(takeUntilDestroyed())
+      .subscribe(async (message) => {
+        if (message === 'Socket authentication failed.') {
+          await this.authService.logout();
+          await this.router.navigate(['/login']);
+          return;
+        }
+        this.socketError = message;
+        this.cdr.markForCheck();
+      });
   }
 
   private subscribeToSocketRouteUpdates(): void {

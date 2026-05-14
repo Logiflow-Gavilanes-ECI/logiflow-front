@@ -14,6 +14,19 @@
 
 <ion-content class="route-content" [scrollY]="false">
 
+  <!-- ── Socket error banner ──────────────────────────────── -->
+  <div class="socket-error-banner" *ngIf="socketError" role="alert">
+    <ion-icon name="wifi-outline" class="socket-error-banner__icon"></ion-icon>
+    <span class="socket-error-banner__text">Sin conexión — los datos pueden estar desactualizados</span>
+    <button class="socket-error-banner__btn" (click)="reconnect()">
+      <ion-icon name="refresh-outline"></ion-icon>
+      Reintentar
+    </button>
+    <button class="socket-error-banner__close" (click)="dismissSocketError()" aria-label="Cerrar">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+
   <!-- ── Map (always in DOM for ViewChild) ─────────────────── -->
   <div id="map" #mapContainer class="map-full" [class.map-hidden]="activeTab !== 'map'"></div>
 

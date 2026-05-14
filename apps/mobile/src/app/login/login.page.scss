@@ -160,6 +160,113 @@ ion-content {
   }
 }
 
+.credentials-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--lf-text-muted);
+}
+
+.form-input {
+  width: 100%;
+  background: var(--lf-bg-base);
+  border: 1px solid var(--lf-border);
+  border-radius: 8px;
+  color: var(--lf-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  padding: 13px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+
+  &::placeholder {
+    color: var(--lf-text-muted);
+    opacity: 0.5;
+  }
+
+  &:focus {
+    border-color: var(--lf-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  background: var(--lf-gradient-primary);
+  border: none;
+  border-radius: 10px;
+  color: #0a0e1a;
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 14px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+
+  &__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(10, 14, 26, 0.3);
+    border-top-color: #0a0e1a;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+
+  &__line {
+    flex: 1;
+    height: 1px;
+    background: var(--lf-border);
+  }
+
+  &__text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--lf-text-muted);
+    white-space: nowrap;
+  }
+}
+
 .google-btn {
   display: flex;
   align-items: center;

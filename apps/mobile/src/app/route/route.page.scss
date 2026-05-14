@@ -1,5 +1,65 @@
 :host { display: block; }
 
+// ── Socket error banner ───────────────────────────────────────
+.socket-error-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(17, 10, 10, 0.92);
+  border-bottom: 1px solid var(--lf-red);
+  padding: 10px 14px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+
+  &__icon {
+    font-size: 16px;
+    color: var(--lf-red);
+    flex-shrink: 0;
+  }
+
+  &__text {
+    flex: 1;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #fef2f2;
+    line-height: 1.4;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 6px;
+    color: #fecaca;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    padding: 5px 10px;
+    white-space: nowrap;
+
+    ion-icon { font-size: 12px; }
+  }
+
+  &__close {
+    background: transparent;
+    border: none;
+    color: var(--lf-text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+}
+
 // ── Header ───────────────────────────────────────────────────
 ion-header ion-toolbar {
   --background: var(--lf-bg-card);

@@ -129,4 +129,144 @@ npm run build --workspace=@logiflow/mobile
 | `@logiflow/shared-auth` | Token storage, JWT decode, expiration checks |
 | `@logiflow/shared-maps` | Google Maps loader, Haversine distance |
 
+---
+
+## Cómo compilar el APK
+
+Sigue estos pasos para generar el APK debug de la app móvil en Android Studio.
+
+### Requisitos previos
+
+- **Node.js** 18+ y **npm** 9+
+- **Android Studio** Hedgehog (2023.1.1) o superior — incluye el SDK de Android y un emulador
+- **JDK 17** (incluido en Android Studio)
+- **Gradle** — Android Studio lo descarga automáticamente
+
+Verifica que Android Studio esté instalado y que la variable `ANDROID_HOME` apunte al SDK:
+
+```bash
+# Windows PowerShell
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+```
+
+---
+
+### Paso 1 — Instalar dependencias de Capacitor
+
+Desde la raíz del monorepo:
+
+```bash
+npm install
+```
+
+Capacitor (`@capacitor/core`, `@capacitor/android`, `@capacitor/push-notifications`) ya está declarado en `apps/mobile/package.json`. El `npm install` de la raíz lo resuelve.
+
+---
+
+### Paso 2 — Build de producción del proyecto Ionic
+
+```bash
+# Desde la raíz del monorepo
+npm run build --workspace=@logiflow/mobile
+```
+
+Esto genera la carpeta `apps/mobile/www/` con el bundle de producción.
+
+> Si necesitas apuntar al backend de producción (`https://api.logiflow.app`), usa:
+> ```bash
+> npm run build -- --configuration production --workspace=@logiflow/mobile
+> ```
+
+---
+
+### Paso 3 — Sincronizar con el proyecto Android nativo
+
+```bash
+# Desde apps/mobile/
+cd apps/mobile
+npx cap sync android
+```
+
+Esto copia el contenido de `www/` al proyecto Android en `apps/mobile/android/` y actualiza los plugins de Capacitor.
+
+---
+
+### Paso 4 — Configurar `google-services.json`
+
+Coloca el archivo `google-services.json` (descargado desde Firebase Console → Proyecto LogiFlow → Android → `com.logiflow.app`) en:
+
+```
+apps/mobile/android/app/google-services.json
+```
+
+> **Nota:** Este archivo está en `.gitignore` — no lo subas al repositorio.
+
+---
+
+### Paso 5 — Abrir en Android Studio
+
+```bash
+npx cap open android
+```
+
+Android Studio se abre con el proyecto nativo en `apps/mobile/android/`.
+
+La primera vez que abres el proyecto, Android Studio descarga las dependencias de Gradle automáticamente (puede tardar 2-5 minutos).
+
+---
+
+### Paso 6 — Compilar el APK debug
+
+En Android Studio:
+
+1. Espera a que termine la sincronización de Gradle (barra de progreso en la parte inferior).
+2. Menú **Build → Build Bundle(s) / APK(s) → Build APK(s)**.
+3. Cuando termine, aparece una notificación en la parte inferior derecha con el enlace **"locate"**.
+
+El APK se genera en:
+
+```
+apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+---
+
+### Paso 7 — Instalar en un emulador o dispositivo
+
+**Emulador (Android Studio):**
+
+1. Menú **Tools → Device Manager → Create Virtual Device**.
+2. Selecciona un teléfono (ej. Pixel 7) con API 33 (Android 13) o superior.
+3. Inicia el emulador y presiona **Run ▶** o arrastra el APK al emulador.
+
+**Dispositivo físico:**
+
+```bash
+# Con el dispositivo conectado por USB y depuración USB habilitada
+adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+---
+
+### Verificación del APK
+
+Una vez instalada la app en el emulador:
+
+- La pantalla de login debe cargar.
+- Ingresa con un usuario `conductor` — credenciales de prueba en `.env.prod.example` del backend.
+- El login exitoso debe navegar a la pantalla de ruta con el mapa de Google Maps.
+- Verifica en los logs de Android Studio (**Logcat**) que no hay errores de CORS ni de conexión al backend.
+
+---
+
+### Solución de problemas comunes
+
+| Problema | Causa probable | Solución |
+|----------|---------------|----------|
+| `Gradle sync failed` | JDK no encontrado | En Android Studio: **File → Project Structure → SDK Location** → verifica JDK 17 |
+| `google-services.json not found` | Archivo no copiado | Coloca el archivo en `android/app/google-services.json` |
+| `ERR_CLEARTEXT_NOT_PERMITTED` | HTTP en producción | El build de producción usa `https://` — verifica `environment.prod.ts` |
+| Mapa en blanco | API key no configurada | Verifica que `google-services.json` tiene la API key de Google Maps para Android |
+| `adb: command not found` | `platform-tools` no en PATH | Agrega `$ANDROID_HOME/platform-tools` al PATH |
+
 </div>
