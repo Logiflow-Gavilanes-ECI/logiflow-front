@@ -1,0 +1,35 @@
+name: CI — LogiFlow Front
+
+on:
+  push:
+    branches: [main, develop, 'feat/**', 'fix/**']
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  quality:
+    name: typecheck & lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          # Workspaces share a single root lockfile.
+          cache-dependency-path: package-lock.json
+
+      - name: Install workspace dependencies
+        run: npm ci
+
+      - name: Typecheck (whole project graph)
+        # tsc -b across apps/* + shared/* — fails on any compile error.
+        run: npm run typecheck
+
+      - name: Lint web-admin
+        # mobile doesn't have a lint script yet; add one before extending this.
+        run: npm run lint -w @logiflow/web-admin

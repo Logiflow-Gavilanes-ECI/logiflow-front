@@ -16,4 +16,14 @@ apps/web-admin/.env
 apps/mobile/src/environments/environment.local.ts
 apps/mobile/android/app/google-services.json
 
+# Terraform — never commit state, plans, or real tfvars
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+
 CLAUDE.md
