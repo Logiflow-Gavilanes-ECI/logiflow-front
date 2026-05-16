@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars and fill in your values.
+# NEVER commit terraform.tfvars to git — it identifies the target subscription.
+
+# Subscription that owns the frontend storage account. Different from the
+# backend subscription if hosted in a teammate's Azure tenant.
+subscription_id = "00000000-0000-0000-0000-000000000000"
+
+# Optional overrides (defaults shown — only set if you want to change them):
+# resource_group_name  = "logiflow-frontend-rg"
+# location             = "eastus2"
+# storage_account_name = "logiflowapp"
