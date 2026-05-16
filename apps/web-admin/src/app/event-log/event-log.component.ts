@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { SocketService } from '../core/services/socket.service';
 import { VehicleApiService } from '../core/services/vehicle-api.service';
-import type { VehicleDriverStatusEvent } from '@logiflow/shared-socket';
 
 type LogType = 'system' | 'position' | 'route' | 'offline' | 'status';
 
@@ -37,43 +36,48 @@ export class EventLogComponent implements OnInit, OnDestroy {
         this.add('system', `Room joined: ${data.room}`);
       }),
       this.socketService.onVehiclePosition().subscribe((data) => {
-        this.add('position', `${data.vehicleId} → ${data.lat.toFixed(4)}, ${data.lng.toFixed(4)} · ${data.speed} km/h`);
+        this.withPlate(data.vehicleId, (plate) =>
+          this.add('position', `${plate} → ${data.lat.toFixed(4)}, ${data.lng.toFixed(4)} · ${data.speed} km/h`),
+        );
       }),
       this.socketService.onRouteUpdate().subscribe((data) => {
         const eta = data.estimatedTime ? `, ${data.estimatedTime} min` : '';
-        this.add('route', `Route for ${data.vehicleId} → ${data.stops.length} stops${eta}`);
+        this.withPlate(data.vehicleId, (plate) =>
+          this.add('route', `Ruta para ${plate} → ${data.stops.length} paradas${eta}`),
+        );
       }),
       this.socketService.onVehicleOffline().subscribe((data) => {
-        this.add('offline', `⚠ ${data.vehicleId} NO SIGNAL`);
+        this.withPlate(data.vehicleId, (plate) =>
+          this.add('offline', `⚠ ${plate} SIN SEÑAL`),
+        );
       }),
       this.socketService.onVehicleOnline().subscribe((data) => {
-        this.add('system', `✓ ${data.vehicleId} reconnected`);
+        this.withPlate(data.vehicleId, (plate) =>
+          this.add('system', `✓ ${plate} reconectado`),
+        );
       }),
       this.socketService.onDriverStatus().subscribe((data) => {
-        this.logStatusWithPlate(data);
+        const iconMap: Record<string, string> = { DELIVERED: '📦', ARRIVED: '📍', START: '🚗' };
+        const icon = iconMap[data.status] ?? '🔔';
+        this.withPlate(data.vehicleId, (plate) =>
+          this.add('status', `${icon} ${plate} → ${data.status}`),
+        );
       }),
     );
   }
 
-  private logStatusWithPlate(data: VehicleDriverStatusEvent): void {
-    const iconMap: Record<string, string> = { DELIVERED: '📦', ARRIVED: '📍', START: '🚗' };
-    const icon = iconMap[data.status] ?? '🔔';
-    const stop = data.stopId ? ` · ${data.stopId}` : '';
-
-    const cached = this.plateCache[data.vehicleId];
+  private withPlate(vehicleId: string, cb: (plate: string) => void): void {
+    const cached = this.plateCache[vehicleId];
     if (cached) {
-      this.add('status', `${icon} ${cached} → ${data.status}${stop}`);
+      cb(cached);
       return;
     }
-
-    this.vehicleApi.getOne(data.vehicleId).subscribe({
+    this.vehicleApi.getOne(vehicleId).subscribe({
       next: (v) => {
-        this.plateCache[data.vehicleId] = v.plate;
-        this.add('status', `${icon} ${v.plate} → ${data.status}${stop}`);
+        this.plateCache[vehicleId] = v.plate;
+        cb(v.plate);
       },
-      error: () => {
-        this.add('status', `${icon} ${data.vehicleId.slice(0, 8)} → ${data.status}${stop}`);
-      },
+      error: () => cb(vehicleId),
     });
   }
 
