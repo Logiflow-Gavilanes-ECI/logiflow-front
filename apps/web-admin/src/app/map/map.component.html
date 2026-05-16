@@ -1,0 +1,26 @@
+<div class="map-wrapper">
+  <div #mapContainer class="map-canvas"></div>
+
+  <div class="map-skeleton-overlay" *ngIf="isLoading">
+    <div class="skeleton-grid">
+      <ion-skeleton-text [animated]="true" class="sk-block sk-block--wide"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="sk-block sk-block--medium"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="sk-block sk-block--narrow"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="sk-block sk-block--wide"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="sk-block sk-block--medium"></ion-skeleton-text>
+    </div>
+    <div class="skeleton-label">Loading map...</div>
+  </div>
+
+  <button class="btn-reset" (click)="resetMapView()">&#8862; Overview</button>
+  <button class="btn-fit-all" (click)="fitAllVehicles()" title="Ver todos los vehículos">&#9654;&#9664; Fit All</button>
+
+  <div class="route-toast" *ngIf="toastVisible && toastData">
+    <div class="toast-title">New route received</div>
+    <div class="toast-row">Vehicle   <span>{{ toastData.vehicleId }}</span></div>
+    <div class="toast-row">Stops     <span>{{ toastData.stops }}</span></div>
+    <div class="toast-row">Time      <span>{{ toastData.eta !== null ? toastData.eta + ' min' : '--' }}</span></div>
+    <div class="toast-row">Distance  <span>{{ toastData.distance !== null ? (toastData.distance / 1000 | number:'1.1-1') + ' km' : '--' }}</span></div>
+    <div class="toast-row">Event     <span>{{ toastData.eventType || '--' }}</span></div>
+  </div>
+</div>

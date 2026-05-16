@@ -1,0 +1,42 @@
+{
+  "name": "@logiflow/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "build:android": "ng build && npx cap sync android",
+    "watch": "ng build --watch --configuration development",
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android",
+    "build:ts": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.1",
+    "@capacitor/browser": "^8.0.3",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/geolocation": "^8.2.0",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/push-notifications": "^8.0.0",
+    "@ionic/angular": "^8.0.0",
+    "@logiflow/shared-auth": "0.1.0",
+    "@logiflow/shared-maps": "0.1.0",
+    "@logiflow/shared-models": "0.1.0",
+    "@logiflow/shared-socket": "0.1.0",
+    "rxjs": "~7.8.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0",
+    "@types/google.maps": "^3.58.1"
+  }
+}

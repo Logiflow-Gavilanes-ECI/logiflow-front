@@ -1,0 +1,307 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      <span class="logo-text">Logi<span class="logo-accent">Flow</span></span>
+      <span class="header-sep">&mdash;</span>
+      <span class="header-sub">{{ tabTitles[activeTab] }}</span>
+    </ion-title>
+    <div slot="end" class="route-badge" *ngIf="routeSteps.length > 0 && activeTab === 'map'">
+      <ion-icon name="navigate-outline"></ion-icon>
+      <span>{{ routeSteps.length }} stop{{ routeSteps.length !== 1 ? 's' : '' }}</span>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="route-content" [scrollY]="false">
+
+  <!-- ── Socket error banner ──────────────────────────────── -->
+  <div class="socket-error-banner" *ngIf="socketError" role="alert">
+    <ion-icon name="wifi-outline" class="socket-error-banner__icon"></ion-icon>
+    <span class="socket-error-banner__text">Sin conexión — los datos pueden estar desactualizados</span>
+    <button class="socket-error-banner__btn" (click)="reconnect()">
+      <ion-icon name="refresh-outline"></ion-icon>
+      Reintentar
+    </button>
+    <button class="socket-error-banner__close" (click)="dismissSocketError()" aria-label="Cerrar">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+
+  <!-- ── Map (always in DOM for ViewChild) ─────────────────── -->
+  <div id="map" #mapContainer class="map-full" [class.map-hidden]="activeTab !== 'map'"></div>
+
+  <!-- Botón centrar en conductor (como Waze) -->
+  <button
+    *ngIf="activeTab === 'map'"
+    class="btn-center-driver"
+    (click)="centerOnDriver()"
+    aria-label="Centrar en mi ubicación"
+  >
+    <ion-icon name="navigate-circle-outline"></ion-icon>
+  </button>
+
+  <div class="map-no-route-badge" *ngIf="activeTab === 'map' && routeSteps.length === 0">
+    <ion-icon name="map-outline"></ion-icon>
+    <span>No route assigned</span>
+  </div>
+
+  <!-- Bottom sheet (map tab) -->
+  <div class="bottom-sheet" *ngIf="activeTab === 'map'"
+       [class.bottom-sheet--expanded]="isPanelExpanded">
+
+    <button class="bottom-sheet__handle" (click)="togglePanel()" aria-label="Toggle stop list">
+      <div class="handle-pill"></div>
+    </button>
+
+    <div class="sheet-status-row">
+      <div class="sheet-status-chip" [class]="'sheet-status-chip--' + (currentStatus || 'idle')">
+        <ion-icon [name]="currentStatusDisplay.icon"></ion-icon>
+        <span>{{ currentStatusDisplay.label }}</span>
+      </div>
+      <span class="sheet-progress" *ngIf="routeSteps.length > 0">
+        {{ completedCount }}/{{ routeSteps.length }} completed
+      </span>
+    </div>
+
+    <div class="sheet-controls">
+      <logiflow-trip-status
+        [currentStatus]="currentStatus"
+        (statusChange)="handleTripStatusChange($event)">
+      </logiflow-trip-status>
+    </div>
+
+    <div class="sheet-stop-list">
+      <button class="sheet-stop-header" (click)="togglePanel()" aria-label="Toggle stop list">
+        <span class="sheet-stop-title">Delivery Stops</span>
+        <ion-icon
+          [name]="isPanelExpanded ? 'chevron-down-outline' : 'chevron-up-outline'"
+          class="sheet-chevron">
+        </ion-icon>
+      </button>
+
+      <ion-list>
+        <ion-item
+          class="stop-item"
+          [class.stop-item-active]="isActiveStep(step)"
+          [class.stop-item-completed]="isCompletedStep(step)"
+          detail="false"
+          button="true"
+          *ngFor="let step of routeSteps; let i = index"
+          (click)="centerMapOnStopAndCollapse(step)"
+          (keydown.enter)="centerMapOnStopAndCollapse(step)"
+          (keydown.space)="centerMapOnStopAndCollapse(step)">
+          <ion-badge slot="start" class="arrival-badge" [style.background-color]="getStatusColor(step)">
+            {{ isCompletedStep(step) ? '✓' : (i + 1) }}
+          </ion-badge>
+          <ion-note class="stop-address">{{ step.address }}</ion-note>
+          <ion-chip slot="end" [style.background-color]="getStatusColor(step)" [class.stop-badge-pulse]="isActiveStep(step)">
+            <ion-icon [name]="getStatusIcon(step)"></ion-icon>
+            <ion-label>{{ getStatusLabel(step) }}</ion-label>
+          </ion-chip>
+        </ion-item>
+      </ion-list>
+
+      <div class="sheet-empty" *ngIf="routeSteps.length === 0">
+        <ion-icon name="checkmark-circle-outline" class="sheet-empty__icon"></ion-icon>
+        <span class="sheet-empty__text">No stops assigned</span>
+        <span class="sheet-empty__sub">The dispatcher will assign your route shortly</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Stops tab view ────────────────────────────────────── -->
+  <div class="tab-view" *ngIf="activeTab === 'stops'">
+    <div class="stops-trip-controls">
+      <div class="sheet-status-row">
+        <div class="sheet-status-chip" [class]="'sheet-status-chip--' + (currentStatus || 'idle')">
+          <ion-icon [name]="currentStatusDisplay.icon"></ion-icon>
+          <span>{{ currentStatusDisplay.label }}</span>
+        </div>
+        <span class="sheet-progress" *ngIf="routeSteps.length > 0">
+          {{ completedCount }}/{{ routeSteps.length }} completed
+        </span>
+      </div>
+      <div class="sheet-controls">
+        <logiflow-trip-status
+          [currentStatus]="currentStatus"
+          (statusChange)="handleTripStatusChange($event)">
+        </logiflow-trip-status>
+      </div>
+    </div>
+
+    <div class="stops-scroll-list">
+      <ion-list *ngIf="routeSteps.length > 0">
+        <ion-item
+          class="stop-item"
+          [class.stop-item-active]="isActiveStep(step)"
+          [class.stop-item-completed]="isCompletedStep(step)"
+          detail="false"
+          button="true"
+          *ngFor="let step of routeSteps; let i = index"
+          (click)="centerMapOnStopAndGoToMap(step)"
+          (keydown.enter)="centerMapOnStopAndGoToMap(step)"
+          (keydown.space)="centerMapOnStopAndGoToMap(step)">
+          <ion-badge slot="start" class="arrival-badge" [style.background-color]="getStatusColor(step)">
+            {{ isCompletedStep(step) ? '✓' : (i + 1) }}
+          </ion-badge>
+          <ion-note class="stop-address">{{ step.address }}</ion-note>
+          <ion-chip slot="end" [style.background-color]="getStatusColor(step)" [class.stop-badge-pulse]="isActiveStep(step)">
+            <ion-icon [name]="getStatusIcon(step)"></ion-icon>
+            <ion-label>{{ getStatusLabel(step) }}</ion-label>
+          </ion-chip>
+        </ion-item>
+      </ion-list>
+
+      <div class="sheet-empty" *ngIf="routeSteps.length === 0">
+        <ion-icon name="checkmark-circle-outline" class="sheet-empty__icon"></ion-icon>
+        <span class="sheet-empty__text">No stops assigned</span>
+        <span class="sheet-empty__sub">The dispatcher will assign your route shortly</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Notifications tab view ────────────────────────────── -->
+  <div class="tab-view" *ngIf="activeTab === 'notifications'">
+    <div class="notif-list" *ngIf="recentAlerts.length > 0">
+      <div class="notif-item" *ngFor="let alert of recentAlerts">
+        <div class="notif-icon-wrap">
+          <ion-icon name="navigate-circle-outline" class="notif-icon"></ion-icon>
+        </div>
+        <div class="notif-body">
+          <span class="notif-title">Route updated</span>
+          <span class="notif-sub">{{ alert.stopsCount }} stop{{ alert.stopsCount !== 1 ? 's' : '' }} assigned by dispatcher</span>
+          <span class="notif-time">{{ alert.time }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-empty" *ngIf="recentAlerts.length === 0">
+      <ion-icon name="notifications-outline" class="tab-empty__icon"></ion-icon>
+      <span class="tab-empty__text">No alerts yet</span>
+      <span class="tab-empty__sub">Route updates from your dispatcher will appear here</span>
+    </div>
+  </div>
+
+  <!-- ── Profile tab view ──────────────────────────────────── -->
+  <div class="tab-view profile-scroll" *ngIf="activeTab === 'profile'">
+
+    <!-- Driver card -->
+    <div class="profile-card">
+      <div class="profile-avatar">
+        <span class="profile-avatar__initials">{{ driverInitials }}</span>
+      </div>
+      <span class="profile-email">{{ driverEmail }}</span>
+      <div class="profile-role-badge">
+        <ion-icon name="car-outline"></ion-icon>
+        <span>Conductor</span>
+      </div>
+    </div>
+
+    <!-- Vehicle info -->
+    <div class="profile-section-title">Vehículo asignado</div>
+    <div class="profile-info-list">
+      <div class="profile-info-item">
+        <span class="profile-info-label">ID</span>
+        <span class="profile-info-value">{{ driverVehicleId || '—' }}</span>
+      </div>
+      <ng-container *ngIf="vehicleDetailsLoading">
+        <div class="profile-info-item">
+          <span class="profile-info-label">Placa</span>
+          <span class="profile-skeleton"></span>
+        </div>
+        <div class="profile-info-item">
+          <span class="profile-info-label">Modelo</span>
+          <span class="profile-skeleton"></span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!vehicleDetailsLoading && vehicleDetails">
+        <div class="profile-info-item">
+          <span class="profile-info-label">Placa</span>
+          <span class="profile-info-value profile-info-value--highlight">{{ vehicleDetails.plate }}</span>
+        </div>
+        <div class="profile-info-item">
+          <span class="profile-info-label">Modelo</span>
+          <span class="profile-info-value">{{ vehicleDetails.model }}</span>
+        </div>
+        <div class="profile-info-item">
+          <span class="profile-info-label">Estado</span>
+          <span class="profile-status-badge" [class.profile-status-badge--online]="vehicleDetails.status === 'online'">
+            {{ vehicleDetails.status === 'online' ? 'En línea' : 'Fuera de línea' }}
+          </span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!vehicleDetailsLoading && !vehicleDetails">
+        <div class="profile-info-item profile-info-item--muted">
+          <span class="profile-info-label">Placa / Modelo</span>
+          <span class="profile-info-value">No disponible</span>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Today's progress -->
+    <div class="profile-section-title">Ruta de hoy</div>
+    <div class="profile-info-list">
+      <div class="profile-info-item">
+        <span class="profile-info-label">Paradas totales</span>
+        <span class="profile-info-value">{{ routeSteps.length }}</span>
+      </div>
+      <div class="profile-info-item">
+        <span class="profile-info-label">Completadas</span>
+        <span class="profile-info-value profile-info-value--green">{{ completedCount }}/{{ routeSteps.length }}</span>
+      </div>
+      <div class="profile-info-item">
+        <span class="profile-info-label">Pendientes</span>
+        <span class="profile-info-value">{{ routeSteps.length - completedCount }}</span>
+      </div>
+    </div>
+
+    <!-- Completed deliveries list -->
+    <div class="profile-section-title" *ngIf="completedDeliveries.length > 0">
+      Entregas realizadas ({{ completedDeliveries.length }})
+    </div>
+    <div class="delivery-list" *ngIf="completedDeliveries.length > 0">
+      <div class="delivery-item" *ngFor="let d of completedDeliveries">
+        <div class="delivery-order">{{ d.arrivalOrder }}</div>
+        <div class="delivery-body">
+          <span class="delivery-address">{{ d.address }}</span>
+        </div>
+        <ion-icon name="checkmark-circle-outline" class="delivery-check"></ion-icon>
+      </div>
+    </div>
+
+    <div class="profile-empty-deliveries" *ngIf="completedDeliveries.length === 0">
+      <ion-icon name="navigate-outline"></ion-icon>
+      <span>Ninguna entrega completada aún en esta sesión</span>
+    </div>
+
+    <button class="logout-btn" (click)="logout()">
+      <ion-icon name="log-out-outline"></ion-icon>
+      <span>Cerrar sesión</span>
+    </button>
+
+  </div>
+
+
+</ion-content>
+
+<!-- ── Tab bar (fuera de ion-content para que funcione en Android) ── -->
+<div class="app-tab-bar">
+  <button class="tab-btn" [class.tab-btn--active]="activeTab === 'map'" (click)="setTab('map')">
+    <ion-icon name="map-outline"></ion-icon>
+    <span>Ruta</span>
+  </button>
+  <button class="tab-btn" [class.tab-btn--active]="activeTab === 'stops'" (click)="setTab('stops')">
+    <ion-icon name="list-outline"></ion-icon>
+    <span>Paradas</span>
+    <span class="tab-btn__badge" *ngIf="routeSteps.length > 0">{{ routeSteps.length }}</span>
+  </button>
+  <button class="tab-btn" [class.tab-btn--active]="activeTab === 'notifications'" (click)="setTab('notifications')">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <span>Alertas</span>
+    <span class="tab-btn__badge tab-btn__badge--new" *ngIf="unreadAlerts > 0">{{ unreadAlerts }}</span>
+  </button>
+  <button class="tab-btn" [class.tab-btn--active]="activeTab === 'profile'" (click)="setTab('profile')">
+    <ion-icon name="person-outline"></ion-icon>
+    <span>Perfil</span>
+  </button>
+</div>

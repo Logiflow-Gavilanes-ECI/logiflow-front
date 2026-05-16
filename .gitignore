@@ -1,0 +1,29 @@
+node_modules/
+dist/
+www/
+.angular/
+coverage/
+*.tsbuildinfo
+.DS_Store
+*.log
+.env
+.env.local
+
+# Local environment overrides — put your API keys here, never commit
+apps/web-admin/src/environments/environment.local.ts
+apps/web-admin/src/environments/environment.prod.ts
+apps/web-admin/.env
+apps/mobile/src/environments/environment.local.ts
+apps/mobile/android/app/google-services.json
+
+# Terraform — never commit state, plans, or real tfvars
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+
+CLAUDE.md

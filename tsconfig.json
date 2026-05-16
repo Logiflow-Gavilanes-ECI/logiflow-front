@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./shared/models" },
+    { "path": "./shared/auth" },
+    { "path": "./shared/maps" },
+    { "path": "./shared/socket" },
+    { "path": "./apps/mobile" },
+    { "path": "./apps/web-admin" }
+  ]
+}

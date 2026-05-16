@@ -1,0 +1,312 @@
+ion-content {
+  --background: var(--lf-bg-deep);
+}
+
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 24px;
+  background: var(--lf-gradient-bg);
+}
+
+.login-card {
+  background: var(--lf-bg-card);
+  border: 1px solid var(--lf-border);
+  border-radius: 16px;
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 229, 255, 0.05);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--lf-gradient-primary);
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+.login-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.logo-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(124, 58, 237, 0.15));
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+
+  &__svg {
+    font-size: 28px;
+    color: var(--lf-cyan);
+  }
+}
+
+.logo-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--lf-cyan);
+  text-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+}
+
+.logo-accent {
+  color: var(--lf-orange);
+  text-shadow: 0 0 30px rgba(255, 107, 53, 0.2);
+}
+
+.logo-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--lf-text-muted);
+  padding: 4px 12px;
+  border: 1px solid var(--lf-border);
+  border-radius: 20px;
+  background: rgba(0, 229, 255, 0.04);
+}
+
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-hint {
+  margin: 0;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--lf-text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.form-error {
+  margin: 0 0 16px;
+  color: var(--lf-red);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.network-error {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+
+  &__title {
+    margin: 0 0 6px;
+    color: var(--lf-red);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  &__message {
+    margin: 0;
+    color: #fca5a5;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  &__btn {
+    margin-top: 10px;
+    border: 1px solid rgba(252, 165, 165, 0.4);
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.1);
+    color: #fecaca;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    padding: 6px 12px;
+    text-transform: uppercase;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+  }
+}
+
+.credentials-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--lf-text-muted);
+}
+
+.form-input {
+  width: 100%;
+  background: var(--lf-bg-base);
+  border: 1px solid var(--lf-border);
+  border-radius: 8px;
+  color: var(--lf-text);
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  padding: 13px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+
+  &::placeholder {
+    color: var(--lf-text-muted);
+    opacity: 0.5;
+  }
+
+  &:focus {
+    border-color: var(--lf-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  background: var(--lf-gradient-primary);
+  border: none;
+  border-radius: 10px;
+  color: #0a0e1a;
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 14px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+
+  &__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(10, 14, 26, 0.3);
+    border-top-color: #0a0e1a;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+
+  &__line {
+    flex: 1;
+    height: 1px;
+    background: var(--lf-border);
+  }
+
+  &__text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--lf-text-muted);
+    white-space: nowrap;
+  }
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--lf-bg-base);
+  border: 1px solid var(--lf-border);
+  border-radius: 10px;
+  color: var(--lf-text);
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: var(--lf-border-light);
+    background: var(--lf-bg-elevated);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 375px) {
+  .login-card {
+    padding: 28px 20px;
+  }
+
+  .logo-text {
+    font-size: 22px;
+  }
+}
