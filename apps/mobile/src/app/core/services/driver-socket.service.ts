@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Geolocation } from '@capacitor/geolocation';
 import {
   ROUTE_STEP_STATUS,
   type DriverRoute,
@@ -34,15 +35,20 @@ interface RouteStopPayload {
 export class DriverSocketService {
   readonly routeUpdate$: Observable<DriverRoute>;
   readonly error$: Observable<string>;
+  readonly position$: Observable<{ lat: number; lng: number; speed: number }>;
 
   private readonly routeUpdateSubject = new Subject<DriverRoute>();
   private readonly errorSubject = new Subject<string>();
+  private readonly positionSubject = new Subject<{ lat: number; lng: number; speed: number }>();
   private socket: Socket | null = null;
   private activeVehicleId: string | null = null;
+  private positionIntervalId: ReturnType<typeof setInterval> | null = null;
+  private static readonly POSITION_INTERVAL_MS = 5000;
 
   constructor(private readonly authService: AuthService) {
     this.routeUpdate$ = this.routeUpdateSubject.asObservable();
     this.error$ = this.errorSubject.asObservable();
+    this.position$ = this.positionSubject.asObservable();
 
     this.handleSocketConnected = this.handleSocketConnected.bind(this);
     this.handleSocketDisconnected = this.handleSocketDisconnected.bind(this);
@@ -95,6 +101,45 @@ export class DriverSocketService {
     this.socket.disconnect();
     this.socket = null;
     this.activeVehicleId = null;
+  }
+
+  async startPositionTracking(vehicleId: string): Promise<void> {
+    if (this.positionIntervalId !== null) return;
+
+    try {
+      await Geolocation.requestPermissions();
+    } catch {
+      console.warn('[DriverSocket] Could not request location permissions.');
+    }
+
+    this.positionIntervalId = setInterval(() => {
+      void this.emitCurrentPosition(vehicleId);
+    }, DriverSocketService.POSITION_INTERVAL_MS);
+
+    void this.emitCurrentPosition(vehicleId);
+  }
+
+  stopPositionTracking(): void {
+    if (this.positionIntervalId === null) return;
+    clearInterval(this.positionIntervalId);
+    this.positionIntervalId = null;
+  }
+
+  private async emitCurrentPosition(vehicleId: string): Promise<void> {
+    if (!this.socket?.connected) return;
+
+    try {
+      const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 4000 });
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const speed = Math.round((position.coords.speed ?? 0) * 3.6);
+      this.socket.emit(SocketEventConstants.vehiclePosition, {
+        vehicleId, lat, lng, speed, timestamp: new Date().toISOString(),
+      });
+      this.positionSubject.next({ lat, lng, speed });
+    } catch (err) {
+      console.warn('[DriverSocket] GPS read failed:', err);
+    }
   }
 
   emitStatusUpdate(vehicleId: string, status: TripStatus, stopId: string | null): void {

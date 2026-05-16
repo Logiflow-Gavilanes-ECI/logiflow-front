@@ -5,15 +5,91 @@
       <span class="header-separator">&mdash;</span>
       <span class="header-subtitle">Control Center</span>
     </ion-title>
-    <div slot="end" class="connection-status" [class.connected]="!socketError" [class.disconnected]="socketError">
-      <span class="status-dot" [class.pulse]="!socketError"></span>
-      <span class="status-label">{{ socketError ? 'Disconnected' : 'Connected' }}</span>
+    <div slot="end" class="toolbar-end">
+      <div class="connection-status" [class.connected]="!socketError" [class.disconnected]="socketError">
+        <span class="status-dot" [class.pulse]="!socketError"></span>
+        <span class="status-label">{{ socketError ? 'Disconnected' : 'Connected' }}</span>
+      </div>
+
+      <!-- Avatar (solo el botón vive dentro del toolbar) -->
+      <div class="profile-wrapper">
+        <button
+          class="profile-avatar"
+          (click)="profileMenuOpen = !profileMenuOpen"
+          [attr.aria-expanded]="profileMenuOpen"
+          aria-haspopup="true"
+          title="Perfil de {{ userEmail }}"
+        >
+          {{ userInitial }}
+        </button>
+      </div>
     </div>
+  </ion-toolbar>
+  <ion-toolbar class="nav-toolbar">
+    <nav class="nav-tabs">
+      <button
+        class="nav-tab"
+        [class.active]="activeView === 'dashboard'"
+        (click)="setView('dashboard')"
+      >
+        <ion-icon name="grid-outline"></ion-icon>
+        Dashboard
+        <span class="nav-badge" *ngIf="routeUpdateCount > 0 && activeView !== 'dashboard'">{{ routeUpdateCount }}</span>
+      </button>
+      <button
+        class="nav-tab"
+        [class.active]="activeView === 'fleet'"
+        (click)="setView('fleet')"
+      >
+        <ion-icon name="car-outline"></ion-icon>
+        Fleet
+      </button>
+      <button
+        class="nav-tab"
+        [class.active]="activeView === 'alerts'"
+        (click)="setView('alerts')"
+      >
+        <ion-icon name="pulse-outline"></ion-icon>
+        Alerts
+      </button>
+    </nav>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="content-host">
+<!-- Backdrop y dropdown fuera del ion-header para evitar el overflow:hidden del toolbar -->
+<div
+  class="profile-backdrop"
+  *ngIf="profileMenuOpen"
+  (click)="profileMenuOpen = false"
+  (keydown.escape)="profileMenuOpen = false"
+  tabindex="-1"
+  aria-hidden="true"
+></div>
+
+<div class="profile-menu" [class.open]="profileMenuOpen" role="menu">
+  <div class="profile-menu__header">
+    <div class="profile-menu__avatar-lg">{{ userInitial }}</div>
+    <div class="profile-menu__info">
+      <span class="profile-menu__name">{{ userName }}</span>
+      <span class="profile-menu__email">{{ userEmail }}</span>
+      <span class="profile-menu__role">{{ userRole }}</span>
+    </div>
+  </div>
+  <div class="profile-menu__divider"></div>
+  <button
+    class="profile-menu__item profile-menu__item--danger"
+    role="menuitem"
+    (click)="logout(); profileMenuOpen = false"
+  >
+    <ion-icon name="log-out-outline"></ion-icon>
+    Cerrar sesión
+  </button>
+</div>
+
+<ion-content [scrollY]="false">
+
+  <!-- ── DASHBOARD VIEW ─────────────────────────────────────────── -->
+  <div class="content-host" [hidden]="activeView !== 'dashboard'">
     <div class="dashboard-layout">
       <aside class="sidebar">
         <app-vehicle-list (vehicleClicked)="onVehicleClicked($event)"></app-vehicle-list>
@@ -32,5 +108,138 @@
         Reconnect
       </button>
     </div>
+
+    <!-- Vehicle detail panel -->
+    <div class="vehicle-panel" [class.open]="selectedVehicle !== null || isLoadingDetail">
+      <div class="vehicle-panel__header">
+        <span class="vehicle-panel__title">
+          {{ selectedVehicle ? selectedVehicle.plate : 'Loading…' }}
+        </span>
+        <button class="vehicle-panel__close" (click)="closeVehicleDetail()" aria-label="Close">✕</button>
+      </div>
+      <div class="vehicle-panel__body">
+        <div class="panel-loading" *ngIf="isLoadingDetail && !selectedVehicle">
+          <span class="panel-loading__spinner"></span>
+          <span>Fetching vehicle data…</span>
+        </div>
+        <ng-container *ngIf="selectedVehicle">
+          <div class="detail-section">
+            <p class="detail-row">
+              <span class="detail-label">ID</span>
+              <span class="detail-value mono">{{ selectedVehicle.id }}</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Model</span>
+              <span class="detail-value">{{ selectedVehicle.model }}</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Capacity</span>
+              <span class="detail-value">{{ selectedVehicle.capacity }} units</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Status</span>
+              <span class="status-chip" [class.online]="selectedVehicle.status === 'online'" [class.offline]="selectedVehicle.status !== 'online'">
+                {{ selectedVehicle.status }}
+              </span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Position</span>
+              <span class="detail-value mono">{{ selectedVehicle.lat | number:'1.4-4' }}, {{ selectedVehicle.lng | number:'1.4-4' }}</span>
+            </p>
+          </div>
+
+          <div class="detail-section" *ngIf="vehicleRoute">
+            <p class="detail-section__title">Route — {{ vehicleRoute.steps.length }} stops</p>
+            <div class="route-steps" *ngIf="vehicleRoute.steps.length; else noSteps">
+              <div class="route-step" *ngFor="let step of vehicleRoute.steps">
+                <span class="step-order">{{ step.arrivalOrder }}</span>
+                <div class="step-body">
+                  <span class="step-address">{{ step.address }}</span>
+                  <span class="step-status" [class]="'step-status--' + step.status">{{ step.status }}</span>
+                </div>
+              </div>
+            </div>
+            <ng-template #noSteps>
+              <p class="detail-empty">No active route</p>
+            </ng-template>
+          </div>
+
+          <div class="detail-section" *ngIf="isLoadingDetail && !vehicleRoute">
+            <p class="detail-empty">Loading route…</p>
+          </div>
+        </ng-container>
+      </div>
+    </div>
   </div>
+
+  <!-- ── FLEET VIEW ──────────────────────────────────────────────── -->
+  <div class="fleet-view" [hidden]="activeView !== 'fleet'">
+    <div class="fleet-header">
+      <h2 class="fleet-title">Fleet Management</h2>
+      <button class="fleet-refresh-btn" (click)="loadFleet()" [disabled]="isLoadingFleet">
+        <ion-icon name="refresh-outline"></ion-icon>
+        Refresh
+      </button>
+    </div>
+
+    <div class="fleet-loading" *ngIf="isLoadingFleet">
+      <span class="fleet-loading__spinner"></span>
+      <span>Loading fleet…</span>
+    </div>
+
+    <div class="fleet-error" *ngIf="fleetError && !isLoadingFleet">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      {{ fleetError }}
+    </div>
+
+    <div class="fleet-empty" *ngIf="!isLoadingFleet && !fleetError && fleetVehicles.length === 0">
+      <ion-icon name="car-outline" class="fleet-empty__icon"></ion-icon>
+      <p class="fleet-empty__text">No vehicles registered</p>
+    </div>
+
+    <div class="fleet-table-wrap" *ngIf="!isLoadingFleet && fleetVehicles.length > 0">
+      <table class="fleet-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Plate</th>
+            <th>Model</th>
+            <th>Status</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of fleetVehicles">
+            <td class="mono">{{ v.id }}</td>
+            <td class="mono fw-bold">{{ v.plate }}</td>
+            <td>{{ v.model }}</td>
+            <td>
+              <span class="status-chip" [class.online]="v.status === 'online'" [class.offline]="v.status !== 'online'">
+                {{ v.status }}
+              </span>
+            </td>
+            <td>{{ v.capacity }}</td>
+            <td>
+              <button class="table-action-btn" (click)="viewOnMap(v.id)">
+                <ion-icon name="map-outline"></ion-icon>
+                View
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── ALERTS VIEW ─────────────────────────────────────────────── -->
+  <div class="alerts-view" [hidden]="activeView !== 'alerts'">
+    <div class="alerts-header">
+      <h2 class="alerts-title">Event Log</h2>
+    </div>
+    <div class="alerts-log-wrap">
+      <app-event-log></app-event-log>
+    </div>
+  </div>
+
 </ion-content>

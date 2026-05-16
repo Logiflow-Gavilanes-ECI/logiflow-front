@@ -48,3 +48,38 @@ ion-toolbar {
   --color: var(--lf-text);
   --border-color: var(--lf-border);
 }
+
+.route-update-toast {
+  --background: #0d1e35;
+  --border-radius: 16px;
+  --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 229, 255, 0.25);
+  --color: #e2e8f0;
+  --button-color: #00e5ff;
+  --start: 12px;
+  --end: 12px;
+  font-family: 'Space Mono', monospace;
+}
+
+.route-update-toast::part(header) {
+  font-size: 14px;
+  font-weight: 700;
+  color: #00e5ff;
+  letter-spacing: 0.5px;
+}
+
+.route-update-toast::part(message) {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.route-update-toast::part(button) {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.route-update-toast::part(container) {
+  border-left: 3px solid #00e5ff;
+  padding: 12px 14px;
+}

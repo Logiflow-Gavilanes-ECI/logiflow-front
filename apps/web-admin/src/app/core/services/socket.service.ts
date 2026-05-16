@@ -7,6 +7,7 @@ import type {
   VehicleStatusEvent,
   JoinRoomAck,
 } from '@logiflow/shared-models';
+import type { VehicleDriverStatusEvent } from '@logiflow/shared-socket';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment';
 
@@ -21,6 +22,7 @@ export class SocketService implements OnDestroy {
   private readonly joined$ = new Subject<JoinRoomAck>();
   private readonly disconnect$ = new Subject<void>();
   private readonly connectError$ = new Subject<Error>();
+  private readonly driverStatus$ = new Subject<VehicleDriverStatusEvent>();
 
   constructor(private readonly authService: AuthService) {}
 
@@ -35,6 +37,7 @@ export class SocketService implements OnDestroy {
     this.socket.onVehicleOffline((p) => this.vehicleOffline$.next(p));
     this.socket.onVehicleOnline((p) => this.vehicleOnline$.next(p));
     this.socket.onJoined((p) => this.joined$.next(p));
+    this.socket.onVehicleDriverStatus((p) => this.driverStatus$.next(p));
     this.socket.onDisconnect(() => this.disconnect$.next());
     this.socket.onConnectError((err) => {
       this.connectError$.next(err);
@@ -90,6 +93,10 @@ export class SocketService implements OnDestroy {
 
   onConnectError(): Observable<Error> {
     return this.connectError$.asObservable();
+  }
+
+  onDriverStatus(): Observable<VehicleDriverStatusEvent> {
+    return this.driverStatus$.asObservable();
   }
 
   ngOnDestroy(): void {

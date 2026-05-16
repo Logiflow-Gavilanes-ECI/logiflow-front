@@ -27,6 +27,16 @@ export class AuthService {
     return this.tokenService.hasToken() && !this.tokenService.isExpired();
   }
 
+  getEmail(): string | null {
+    const claims = this.tokenService.decodeClaims();
+    return (claims?.['email'] as string) ?? null;
+  }
+
+  getName(): string | null {
+    const claims = this.tokenService.decodeClaims();
+    return (claims?.['name'] as string) ?? null;
+  }
+
   logout(): void {
     this.tokenService.clearToken();
   }

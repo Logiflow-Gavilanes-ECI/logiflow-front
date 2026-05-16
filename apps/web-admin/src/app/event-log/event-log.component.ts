@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { SocketService } from '../core/services/socket.service';
+import { VehicleApiService } from '../core/services/vehicle-api.service';
+import type { VehicleDriverStatusEvent } from '@logiflow/shared-socket';
 
-type LogType = 'system' | 'position' | 'route' | 'offline';
+type LogType = 'system' | 'position' | 'route' | 'offline' | 'status';
 
 interface LogEntry {
   time: string;
@@ -22,8 +24,12 @@ export class EventLogComponent implements OnInit, OnDestroy {
   entries: LogEntry[] = [];
 
   private readonly subscriptions: Subscription[] = [];
+  private readonly plateCache: Record<string, string> = {};
 
-  constructor(private readonly socketService: SocketService) {}
+  constructor(
+    private readonly socketService: SocketService,
+    private readonly vehicleApi: VehicleApiService,
+  ) {}
 
   ngOnInit(): void {
     this.subscriptions.push(
@@ -43,7 +49,32 @@ export class EventLogComponent implements OnInit, OnDestroy {
       this.socketService.onVehicleOnline().subscribe((data) => {
         this.add('system', `✓ ${data.vehicleId} reconnected`);
       }),
+      this.socketService.onDriverStatus().subscribe((data) => {
+        this.logStatusWithPlate(data);
+      }),
     );
+  }
+
+  private logStatusWithPlate(data: VehicleDriverStatusEvent): void {
+    const iconMap: Record<string, string> = { DELIVERED: '📦', ARRIVED: '📍', START: '🚗' };
+    const icon = iconMap[data.status] ?? '🔔';
+    const stop = data.stopId ? ` · ${data.stopId}` : '';
+
+    const cached = this.plateCache[data.vehicleId];
+    if (cached) {
+      this.add('status', `${icon} ${cached} → ${data.status}${stop}`);
+      return;
+    }
+
+    this.vehicleApi.getOne(data.vehicleId).subscribe({
+      next: (v) => {
+        this.plateCache[data.vehicleId] = v.plate;
+        this.add('status', `${icon} ${v.plate} → ${data.status}${stop}`);
+      },
+      error: () => {
+        this.add('status', `${icon} ${data.vehicleId.slice(0, 8)} → ${data.status}${stop}`);
+      },
+    });
   }
 
   private add(type: LogType, message: string): void {

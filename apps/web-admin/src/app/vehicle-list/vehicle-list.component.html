@@ -41,7 +41,7 @@
       (click)="onCardClick(v.vehicleId)"
     >
       <div class="card-header">
-        <span class="vehicle-id">{{ v.vehicleId }}</span>
+        <span class="vehicle-id">{{ v.plate }}</span>
         <span class="badge" [class.offline]="v.isOffline">
           {{ v.isOffline ? 'OFFLINE' : 'EN LÍNEA' }}
         </span>

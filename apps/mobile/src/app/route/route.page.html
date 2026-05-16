@@ -30,6 +30,16 @@
   <!-- ── Map (always in DOM for ViewChild) ─────────────────── -->
   <div id="map" #mapContainer class="map-full" [class.map-hidden]="activeTab !== 'map'"></div>
 
+  <!-- Botón centrar en conductor (como Waze) -->
+  <button
+    *ngIf="activeTab === 'map'"
+    class="btn-center-driver"
+    (click)="centerOnDriver()"
+    aria-label="Centrar en mi ubicación"
+  >
+    <ion-icon name="navigate-circle-outline"></ion-icon>
+  </button>
+
   <div class="map-no-route-badge" *ngIf="activeTab === 'map' && routeSteps.length === 0">
     <ion-icon name="map-outline"></ion-icon>
     <span>No route assigned</span>
@@ -76,12 +86,12 @@
           [class.stop-item-completed]="isCompletedStep(step)"
           detail="false"
           button="true"
-          *ngFor="let step of routeSteps"
+          *ngFor="let step of routeSteps; let i = index"
           (click)="centerMapOnStopAndCollapse(step)"
           (keydown.enter)="centerMapOnStopAndCollapse(step)"
           (keydown.space)="centerMapOnStopAndCollapse(step)">
           <ion-badge slot="start" class="arrival-badge" [style.background-color]="getStatusColor(step)">
-            {{ isCompletedStep(step) ? '✓' : step.arrivalOrder }}
+            {{ isCompletedStep(step) ? '✓' : (i + 1) }}
           </ion-badge>
           <ion-note class="stop-address">{{ step.address }}</ion-note>
           <ion-chip slot="end" [style.background-color]="getStatusColor(step)" [class.stop-badge-pulse]="isActiveStep(step)">
@@ -127,12 +137,12 @@
           [class.stop-item-completed]="isCompletedStep(step)"
           detail="false"
           button="true"
-          *ngFor="let step of routeSteps"
+          *ngFor="let step of routeSteps; let i = index"
           (click)="centerMapOnStopAndGoToMap(step)"
           (keydown.enter)="centerMapOnStopAndGoToMap(step)"
           (keydown.space)="centerMapOnStopAndGoToMap(step)">
           <ion-badge slot="start" class="arrival-badge" [style.background-color]="getStatusColor(step)">
-            {{ isCompletedStep(step) ? '✓' : step.arrivalOrder }}
+            {{ isCompletedStep(step) ? '✓' : (i + 1) }}
           </ion-badge>
           <ion-note class="stop-address">{{ step.address }}</ion-note>
           <ion-chip slot="end" [style.background-color]="getStatusColor(step)" [class.stop-badge-pulse]="isActiveStep(step)">

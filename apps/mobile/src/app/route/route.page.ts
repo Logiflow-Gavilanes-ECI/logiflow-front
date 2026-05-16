@@ -157,6 +157,8 @@ export class RoutePage implements AfterViewInit {
   private routePolyline: google.maps.Polyline | null = null;
   private currentRoute: DriverRoute | null = null;
   private markerBounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private driverMarker: google.maps.Marker | null = null;
+  private previousDriverPos: { lat: number; lng: number } | null = null;
 
   constructor() {
     addIcons({
@@ -169,12 +171,17 @@ export class RoutePage implements AfterViewInit {
     });
     this.subscribeToSocketRouteUpdates();
     this.subscribeToSocketErrors();
+    this.subscribeToPositionUpdates();
   }
 
   ionViewWillEnter(): void {
     void this.loadAndRenderRoute();
     void this.pushNotificationService.initialize();
     void this.loadDriverProfile();
+  }
+
+  ionViewWillLeave(): void {
+    this.driverSocketService.stopPositionTracking();
   }
 
   ngAfterViewInit(): void {
@@ -199,6 +206,15 @@ export class RoutePage implements AfterViewInit {
   togglePanel(): void {
     this.isPanelExpanded = !this.isPanelExpanded;
     this.cdr.markForCheck();
+  }
+
+  centerOnDriver(): void {
+    if (!this.mapInstance || !this.driverMarker) return;
+    const pos = this.driverMarker.getPosition();
+    if (pos) {
+      this.mapInstance.panTo(pos);
+      this.mapInstance.setZoom(17);
+    }
   }
 
   centerMapOnStop(step: RouteStep): void {
@@ -229,7 +245,9 @@ export class RoutePage implements AfterViewInit {
     const activeStop = this.getActiveStop();
     this.driverSocketService.emitStatusUpdate(vehicleId, newStatus, activeStop?.stopId ?? null);
 
-    if (newStatus === TripStatusConstants.delivered) {
+    if (newStatus === TripStatusConstants.inTransit) {
+      this.activateFirstPendingStop();
+    } else if (newStatus === TripStatusConstants.delivered) {
       this.advanceActiveStopToNext();
     }
   }
@@ -301,12 +319,52 @@ export class RoutePage implements AfterViewInit {
       const route = await this.routeService.getDriverRoute();
       this.updateRouteState(route);
       await this.driverSocketService.connect(route.vehicleId);
+      void this.driverSocketService.startPositionTracking(route.vehicleId);
       this.renderRoute();
     } catch (error) {
       const e = error as Record<string, unknown>;
       console.error(`[RoutePage] getDriverRoute failed — status: ${e?.['status']} url: ${e?.['url']} message: ${e?.['message']} error: ${JSON.stringify(e?.['error'])}`);
       this.updateRouteState({ vehicleId: '', steps: [] });
       this.renderRoute();
+    }
+  }
+
+  private subscribeToPositionUpdates(): void {
+    this.driverSocketService.position$
+      .pipe(takeUntilDestroyed())
+      .subscribe(({ lat, lng }) => this.updateDriverMarker(lat, lng));
+  }
+
+  private updateDriverMarker(lat: number, lng: number): void {
+    if (!this.mapInstance) return;
+    const pos = { lat, lng };
+    const rotation = this.previousDriverPos ? calculateBearing(this.previousDriverPos, pos) : 0;
+    this.previousDriverPos = pos;
+
+    const icon: google.maps.Symbol = {
+      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+      scale: 7,
+      fillColor: '#00e5ff',
+      fillOpacity: 1,
+      strokeColor: '#004d5a',
+      strokeWeight: 2,
+      rotation,
+    };
+
+    if (this.driverMarker) {
+      this.driverMarker.setPosition(pos);
+      this.driverMarker.setIcon(icon);
+    } else {
+      this.driverMarker = new google.maps.Marker({
+        map: this.mapInstance,
+        position: pos,
+        zIndex: 999,
+        icon,
+      });
+    }
+
+    if (this.activeTab === 'map') {
+      this.mapInstance.panTo(pos);
     }
   }
 
@@ -331,7 +389,7 @@ export class RoutePage implements AfterViewInit {
   }
 
   private async handleIncomingRouteUpdate(newRoute: DriverRoute): Promise<void> {
-    await this.showRouteUpdateToast();
+    await this.showRouteUpdateToast(newRoute.steps.length);
     this.addAlert(newRoute.steps.length);
     this.applyRouteUpdate(newRoute);
   }
@@ -365,16 +423,20 @@ export class RoutePage implements AfterViewInit {
     this.mapInstance.setCenter({ lat: firstStep.lat, lng: firstStep.lng });
     this.mapInstance.setZoom(RoutePageConstants.DefaultZoom);
     this.renderMarkers(this.currentRoute.steps);
-    this.renderOrderedPolyline(this.currentRoute.steps);
+    this.renderStreetFollowingPolyline(this.currentRoute.steps);
   }
 
-  private async showRouteUpdateToast(): Promise<void> {
+  private async showRouteUpdateToast(stopsCount: number): Promise<void> {
     const toast = await this.toastController.create({
-      message: 'The dispatcher updated your route.',
-      duration: 3000,
+      header: '🚚 Nueva ruta asignada',
+      message: `${stopsCount} parada${stopsCount === 1 ? '' : 's'} · Toca para ver detalles`,
+      duration: 5000,
       position: 'top',
-      color: 'primary',
-      buttons: [{ text: 'View', role: 'info' }],
+      cssClass: 'route-update-toast',
+      buttons: [
+        { text: 'Ver', role: 'info', handler: () => { this.setTab('stops'); } },
+        { icon: 'close-outline', role: 'cancel' },
+      ],
     });
     await toast.present();
   }
@@ -413,19 +475,19 @@ export class RoutePage implements AfterViewInit {
     this.clearMarkers();
     this.clearRoutePolyline();
     this.renderMarkers(this.currentRoute.steps);
-    this.renderOrderedPolyline(this.currentRoute.steps);
+    this.renderStreetFollowingPolyline(this.currentRoute.steps);
   }
 
   private renderMarkers(steps: RouteStep[]): void {
-    for (const step of steps) {
+    steps.forEach((step, index) => {
       const marker = new google.maps.Marker({
         map: this.mapInstance,
         position: { lat: step.lat, lng: step.lng },
-        label: { text: step.arrivalOrder.toString(), color: '#ffffff', fontSize: '11px', fontWeight: 'bold' },
+        label: { text: (index + 1).toString(), color: '#ffffff', fontSize: '11px', fontWeight: 'bold' },
         icon: this.buildMarkerIcon(step),
       });
       this.markerByStopId.set(step.stopId, marker);
-    }
+    });
   }
 
   private buildMarkerIcon(step: RouteStep): google.maps.Symbol {
@@ -455,6 +517,37 @@ export class RoutePage implements AfterViewInit {
     });
   }
 
+  private renderStreetFollowingPolyline(steps: RouteStep[]): void {
+    if (steps.length < 2) return;
+
+    const sorted = [...steps].sort(compareRouteStepsByArrivalOrder);
+    const origin = mapStepToLatLngLiteral(sorted[0]);
+    const destination = mapStepToLatLngLiteral(sorted.at(-1)!);
+    const waypoints = sorted.slice(1, -1).map((step) => ({
+      location: mapStepToLatLngLiteral(step),
+      stopover: true,
+    }));
+
+    const directionsService = new google.maps.DirectionsService();
+    directionsService.route(
+      { origin, destination, waypoints, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: false },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK && result) {
+          this.routePolyline = new google.maps.Polyline({
+            map: this.mapInstance,
+            path: result.routes[0].overview_path,
+            strokeColor: RoutePageConstants.PolylineStrokeColor,
+            strokeOpacity: RoutePageConstants.PolylineStrokeOpacity,
+            strokeWeight: RoutePageConstants.PolylineStrokeWeight,
+          });
+        } else {
+          console.warn('[RoutePage] DirectionsService failed (' + status + '), falling back to straight lines');
+          this.renderOrderedPolyline(steps);
+        }
+      },
+    );
+  }
+
   private clearRoutePolyline(): void {
     if (!this.routePolyline) return;
     this.routePolyline.setMap(null);
@@ -482,6 +575,21 @@ export class RoutePage implements AfterViewInit {
     return this.routeSteps.find(isActiveRouteStep);
   }
 
+  private activateFirstPendingStop(): void {
+    const sortedSteps = [...this.routeSteps].sort(compareRouteStepsByArrivalOrder);
+    const firstPending = sortedSteps.find(isPendingRouteStep);
+    if (!firstPending) return;
+
+    const updatedSteps = sortedSteps.map((step) =>
+      step.stopId === firstPending.stopId ? { ...step, status: 'active' as const } : step,
+    );
+
+    this.currentRoute = { vehicleId: this.currentRoute?.vehicleId ?? '', steps: updatedSteps };
+    this.routeSteps.splice(0, this.routeSteps.length, ...updatedSteps);
+    this.cdr.markForCheck();
+    this.renderRoute();
+  }
+
   private advanceActiveStopToNext(): void {
     const sortedSteps = [...this.routeSteps].sort(compareRouteStepsByArrivalOrder);
     const activeIndex = sortedSteps.findIndex(isActiveRouteStep);
@@ -504,6 +612,14 @@ export class RoutePage implements AfterViewInit {
     this.routeSteps.splice(0, this.routeSteps.length, ...updatedSteps);
     this.cdr.markForCheck();
     this.renderRoute();
+
+    if (nextStep && this.mapInstance) {
+      this.setTab('map');
+      setTimeout(() => {
+        this.mapInstance!.panTo({ lat: nextStep.lat, lng: nextStep.lng });
+        this.mapInstance!.setZoom(RoutePageConstants.SelectedStopZoom);
+      }, 100);
+    }
   }
 }
 
@@ -518,3 +634,11 @@ function stopMarkerBounceAnimation(marker: google.maps.Marker): void {
 }
 function isActiveRouteStep(step: RouteStep): boolean { return step.status === 'active'; }
 function isPendingRouteStep(step: RouteStep): boolean { return step.status === 'pending'; }
+function calculateBearing(from: { lat: number; lng: number }, to: { lat: number; lng: number }): number {
+  const dLng = (to.lng - from.lng) * Math.PI / 180;
+  const lat1 = from.lat * Math.PI / 180;
+  const lat2 = to.lat * Math.PI / 180;
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}

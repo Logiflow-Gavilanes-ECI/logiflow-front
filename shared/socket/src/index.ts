@@ -72,6 +72,13 @@ export interface VehicleStatusEvent {
   vehicleId: string;
 }
 
+export interface VehicleDriverStatusEvent {
+  vehicleId: string;
+  status: string;
+  stopId: string | null;
+  timestamp: string;
+}
+
 export interface JoinVehiclePayload {
   vehicleId: string;
 }
@@ -144,6 +151,11 @@ export class LogiFlowSocketService {
   onVehicleOnline(handler: (payload: VehicleStatusEvent) => void): () => void {
     this.socket.on(SOCKET_EVENTS.VehicleOnline, handler);
     return () => this.socket.off(SOCKET_EVENTS.VehicleOnline, handler);
+  }
+
+  onVehicleDriverStatus(handler: (payload: VehicleDriverStatusEvent) => void): () => void {
+    this.socket.on(SocketEventConstants.vehicleStatus, handler);
+    return () => this.socket.off(SocketEventConstants.vehicleStatus, handler);
   }
 
   onDisconnect(handler: () => void): () => void {
