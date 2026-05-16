@@ -1,64 +1,77 @@
-name: Deploy web-admin to Azure Static Web Apps
+name: Deploy web-admin to Azure Storage Static Website
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-web-admin
+  cancel-in-progress: false
 
 jobs:
   build_and_deploy:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    name: build & upload to $web
     runs-on: ubuntu-latest
-    name: Build and Deploy
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          # Angular 20 requires Node 20.19+ or 22.12+.
+          node-version: '20'
           cache: 'npm'
-          cache-dependency-path: apps/web-admin/package-lock.json
+          # Workspaces share a single root lockfile.
+          cache-dependency-path: package-lock.json
 
-      - name: Install dependencies
-        working-directory: apps/web-admin
+      - name: Install workspace dependencies
+        # `npm ci` runs at the repo root — apps/web-admin has no lockfile of
+        # its own, deps are hoisted via npm workspaces (apps/* + shared/*).
         run: npm ci
 
       - name: Build production
         working-directory: apps/web-admin
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-          REALTIME_URL: https://ws.logiflow.app
-          API_URL: https://api.logiflow.app/api/v1
-          DRIVER_APP_URL: https://driver.logiflow.app
+          # Backend lives at Azure's free per-VM FQDN with nginx terminating TLS.
+          # /api/v1 → gateway:3002, /socket.io → realtime:3001.
+          API_URL: https://logiflow-api.eastus2.cloudapp.azure.com/api/v1
+          REALTIME_URL: https://logiflow-api.eastus2.cloudapp.azure.com
+          # Driver app is an Android APK, not a public web URL — left empty.
+          DRIVER_APP_URL: ''
         run: npm run build -- --configuration production
 
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
+      - name: Upload to Azure Storage $web container
+        uses: azure/CLI@v2
+        env:
+          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+          AZURE_STORAGE_ACCOUNT_KEY:  ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: 'upload'
-          skip_app_build: true
-          app_location: 'apps/web-admin/www'
-          output_location: ''
+          azcliversion: latest
+          # `upload-batch --overwrite` replaces any existing files of the same
+          # name; old hashed chunks linger but don't break anything (and let
+          # users with stale tabs keep working until they refresh).
+          inlineScript: |
+            az storage blob upload-batch \
+              --account-name "$AZURE_STORAGE_ACCOUNT_NAME" \
+              --account-key "$AZURE_STORAGE_ACCOUNT_KEY" \
+              --auth-mode key \
+              --source "apps/web-admin/www" \
+              --destination '$web' \
+              --overwrite
 
-  close_pull_request:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request
-
-    steps:
-      - name: Close Pull Request
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: 'close'
-          app_location: 'apps/web-admin/www'
+            # index.html must never be cached aggressively, or new deploys
+            # don't get picked up until the browser flushes the old copy.
+            az storage blob update \
+              --account-name "$AZURE_STORAGE_ACCOUNT_NAME" \
+              --account-key "$AZURE_STORAGE_ACCOUNT_KEY" \
+              --auth-mode key \
+              --container-name '$web' \
+              --name 'index.html' \
+              --content-cache-control 'no-cache, no-store, must-revalidate'
