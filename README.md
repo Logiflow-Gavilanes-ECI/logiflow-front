@@ -1,142 +1,384 @@
+<!-- =================================================================== -->
+<!--                            HERO SECTION                              -->
+<!-- =================================================================== -->
 <div align="center">
+
+<a href="https://logiflowapp.z13.web.core.windows.net">
+  <img src="https://img.shields.io/badge/%F0%9F%93%B1-LogiFlow_Frontend-FF6B35?style=for-the-badge&labelColor=0D1420" alt="LogiFlow Frontend" height="60"/>
+</a>
 
 # LogiFlow — Frontend Monorepo
 
-**Real-time fleet management interfaces for drivers and dispatchers**
+### *Real-time fleet interfaces for drivers and dispatchers · 2 apps · 4 shared libraries · 1 codebase*
 
-[![CI](https://github.com/Logiflow-Gavilanes-ECI/logiflow-front/actions/workflows/ci.yml/badge.svg)](https://github.com/Logiflow-Gavilanes-ECI/logiflow-front/actions/workflows/ci.yml)
-[![Deploy Web Admin](https://github.com/Logiflow-Gavilanes-ECI/logiflow-front/actions/workflows/deploy-web-admin.yml/badge.svg)](https://github.com/Logiflow-Gavilanes-ECI/logiflow-front/actions/workflows/deploy-web-admin.yml)
-[![Angular](https://img.shields.io/badge/Angular-20-DD0031?logo=angular)](https://angular.dev)
-[![Ionic](https://img.shields.io/badge/Ionic-8-3880FF?logo=ionic)](https://ionicframework.com)
-[![Capacitor](https://img.shields.io/badge/Capacitor-8-119EFF?logo=capacitor)](https://capacitorjs.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<p>
+  <a href="https://logiflowapp.z13.web.core.windows.net">
+    <img src="https://img.shields.io/badge/-LIVE_WEB_ADMIN-FF6B35?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=0D1420" alt="Live Web Admin"/>
+  </a>
+  <a href="https://logiflow-api.eastus2.cloudapp.azure.com/api/v1/docs">
+    <img src="https://img.shields.io/badge/-BACKEND_API-00E5FF?style=for-the-badge&logo=swagger&logoColor=white&labelColor=0D1420" alt="Backend API"/>
+  </a>
+  <a href="https://github.com/Logiflow-Gavilanes-ECI/logiflow">
+    <img src="https://img.shields.io/badge/-BACKEND_REPO-1F3060?style=for-the-badge&logo=github&logoColor=white&labelColor=0D1420" alt="Backend Repo"/>
+  </a>
+</p>
 
-[**Web Admin (live)**](https://logiflowapp.z13.web.core.windows.net) · [**Backend API**](https://logiflow-api.eastus2.cloudapp.azure.com/api/v1/docs)
+<p>
+  <a href="https://github.com/Logiflow-Gavilanes-ECI/logiflow-front/actions/workflows/ci.yml">
+    <img src="https://github.com/Logiflow-Gavilanes-ECI/logiflow-front/actions/workflows/ci.yml/badge.svg" alt="CI"/>
+  </a>
+  <a href="https://github.com/Logiflow-Gavilanes-ECI/logiflow-front/actions/workflows/deploy-web-admin.yml">
+    <img src="https://github.com/Logiflow-Gavilanes-ECI/logiflow-front/actions/workflows/deploy-web-admin.yml/badge.svg" alt="Deploy Web Admin"/>
+  </a>
+  <img src="https://img.shields.io/badge/coverage-80.49%25-brightgreen?style=flat-square&logo=karma" alt="Coverage"/>
+  <img src="https://img.shields.io/badge/tests-109_passing-success?style=flat-square" alt="Tests"/>
+  <img src="https://img.shields.io/badge/license-MIT-yellow?style=flat-square" alt="License"/>
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Angular-20-DD0031?style=flat-square&logo=angular&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Ionic-8-3880FF?style=flat-square&logo=ionic&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Capacitor-8-119EFF?style=flat-square&logo=capacitor&logoColor=white"/>
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white"/>
+  <img src="https://img.shields.io/badge/RxJS-7.8-B7178C?style=flat-square&logo=reactivex&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Socket.io-Client-010101?style=flat-square&logo=socketdotio&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Google_Maps-API-4285F4?style=flat-square&logo=googlemaps&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Firebase-FCM-FFCA28?style=flat-square&logo=firebase&logoColor=black"/>
+  <img src="https://img.shields.io/badge/Android-APK-3DDC84?style=flat-square&logo=android&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Azure-Static_Website-0078D4?style=flat-square&logo=microsoftazure&logoColor=white"/>
+</p>
 
 </div>
 
 ---
 
-## Overview
+<!-- =================================================================== -->
+<!--                         TWO-APP SHOWCASE                             -->
+<!-- =================================================================== -->
 
-This monorepo contains two Angular applications sharing a set of typed libraries:
+<table>
+<tr>
+<td width="50%" valign="top" align="center">
 
-| App | Platform | Audience | Description |
-|-----|----------|----------|-------------|
-| **mobile** | Android (Capacitor) | Drivers | View active delivery route on a live map, report trip status, receive push notifications |
-| **web-admin** | Web browser | Dispatchers | Real-time fleet map, vehicle tracking, event log, alert management |
+### 📱 Mobile App
 
-Both apps authenticate exclusively via **Google OAuth** — no email/password login exists.
+**Driver-facing Android app**
+
+`apps/mobile` · `@logiflow/mobile`
+
+🚀 **Ionic 8 + Angular 20 + Capacitor 8**
+
+Live route map · trip status reports · push notifications
+
+```
+┌─────────────────────┐
+│  LogiFlow — Driver  │
+├─────────────────────┤
+│  ●  Active trip     │
+│  ━━━━━━━━━━━━━━━━━  │
+│   🗺️  Live map       │
+│  (Google Maps)      │
+│  ━━━━━━━━━━━━━━━━━  │
+│  [Start] [Arrived]  │
+│        [Delivered]  │
+├─────────────────────┤
+│  📍 Stop 1 of 5     │
+│  📍 Stop 2 of 5     │
+│  📍 Stop 3 of 5     │
+└─────────────────────┘
+```
+
+</td>
+<td width="50%" valign="top" align="center">
+
+### 🖥️ Web Admin
+
+**Dispatcher dashboard**
+
+`apps/web-admin` · `@logiflow/web-admin`
+
+🚀 **Angular 20 + Ionic 8 components**
+
+Real-time fleet map · vehicle tracking · event log
+
+```
+┌───────────────────────────────┐
+│ LogiFlow — Control Center  ●  │
+├──────────┬────────────────────┤
+│Vehicles  │                    │
+│ ▣ v-001  │    🗺️  Live Map    │
+│ ▣ v-002  │  (Google Maps)     │
+│ ▣ v-003  │                    │
+├──────────┤   ● Vehicle 001    │
+│Events    │   ● Vehicle 002    │
+│ 14:23 ✓  │                    │
+│ 14:25 →  │                    │
+└──────────┴────────────────────┘
+```
+
+</td>
+</tr>
+<tr>
+<td align="center">
+  <a href="#-mobile-app--driver">
+    <img src="https://img.shields.io/badge/-MOBILE_APP_DETAILS-3DDC84?style=for-the-badge&logo=android&logoColor=white"/>
+  </a>
+</td>
+<td align="center">
+  <a href="https://logiflowapp.z13.web.core.windows.net">
+    <img src="https://img.shields.io/badge/-TRY_LIVE_DEMO-FF6B35?style=for-the-badge&logo=googlechrome&logoColor=white"/>
+  </a>
+</td>
+</tr>
+</table>
+
+> Both apps authenticate **exclusively via Google OAuth 2.0**. No email/password login exists in production.
 
 ---
 
-## Table of Contents
+<!-- =================================================================== -->
+<!--                      ARCHITECTURE OVERVIEW                           -->
+<!-- =================================================================== -->
 
-- [Apps](#apps)
-- [Shared Libraries](#shared-libraries)
-- [Quick Start](#quick-start)
-- [Environment Variables](#environment-variables)
-- [CI/CD](#cicd)
-- [Project Structure](#project-structure)
-- [Team](#team)
+## Architecture Overview
+
+```mermaid
+flowchart TB
+    subgraph apps["📱 Apps"]
+        M[Mobile<br/>Ionic + Capacitor]
+        W[Web Admin<br/>Angular]
+    end
+
+    subgraph shared["📦 shared/ libraries"]
+        SM[shared-models<br/>TS interfaces]
+        SS[shared-socket<br/>Socket.io wrapper]
+        SA[shared-auth<br/>JWT storage]
+        SH[shared-maps<br/>Google Maps utils]
+    end
+
+    subgraph backend["☁️ Backend (separate repo)"]
+        API[REST API<br/>NestJS]
+        WSS[Realtime<br/>Socket.io]
+        FCM[Firebase<br/>FCM]
+    end
+
+    M --> SM & SS & SA & SH
+    W --> SM & SS & SA & SH
+
+    M -.HTTPS.-> API
+    W -.HTTPS.-> API
+    M -.WSS.-> WSS
+    W -.WSS.-> WSS
+    FCM -.Push.-> M
+
+    style M fill:#3DDC84,color:#000
+    style W fill:#FF6B35,color:#fff
+    style SM fill:#3178C6,color:#fff
+    style SS fill:#010101,color:#fff
+    style SA fill:#1F3060,color:#fff
+    style SH fill:#4285F4,color:#fff
+    style API fill:#E0234E,color:#fff
+    style WSS fill:#010101,color:#fff
+    style FCM fill:#FFCA28,color:#000
+```
+
+<div align="center">
+  <em>Both apps share four typed TypeScript libraries to keep contracts in sync.</em>
+</div>
 
 ---
 
-## Apps
+<!-- =================================================================== -->
+<!--                            NAVIGATION                                -->
+<!-- =================================================================== -->
 
-### Mobile — Driver App
+## Navigation
 
-> `apps/mobile` · `@logiflow/mobile` · Ionic 8 + Angular 20 + Capacitor 8
+<table>
+<tr>
+<td align="center" width="20%">
+  <a href="#-mobile-app--driver"><b>📱 Mobile App</b></a><br/>
+  <sub>Ionic driver app</sub>
+</td>
+<td align="center" width="20%">
+  <a href="#%EF%B8%8F-web-admin--dispatcher"><b>🖥️ Web Admin</b></a><br/>
+  <sub>Angular dashboard</sub>
+</td>
+<td align="center" width="20%">
+  <a href="#-shared-libraries"><b>📦 Shared Libs</b></a><br/>
+  <sub>4 TypeScript libraries</sub>
+</td>
+<td align="center" width="20%">
+  <a href="#quick-start"><b>🚀 Quick Start</b></a><br/>
+  <sub>Run in 3 commands</sub>
+</td>
+<td align="center" width="20%">
+  <a href="#cicd"><b>🤖 CI/CD</b></a><br/>
+  <sub>Azure deploy pipeline</sub>
+</td>
+</tr>
+</table>
 
-The driver-facing Android app. Drivers sign in with Google, see their assigned delivery route on an interactive map, and report their status in real time.
+---
 
-**Key features:**
+<!-- =================================================================== -->
+<!--                         APP DETAILS: MOBILE                          -->
+<!-- =================================================================== -->
 
-- Google OAuth sign-in (browser-based redirect via `?app=mobile`)
-- Live route map with Google Maps — stop markers color-coded by status (pending / active / delivered)
-- Ordered polyline overlay connecting all stops
-- Trip status panel: **Start** / **Arrived** / **Delivered** buttons with optimistic UI
-- Receives real-time route updates via Socket.io (`vehicle:<id>` room)
-- Firebase Cloud Messaging push notifications for route updates
-- Offline-resilient: gracefully handles network errors on login and route load
+## 📱 Mobile App — Driver
 
-**Screens / routes:**
+> `apps/mobile` · `@logiflow/mobile` · **Ionic 8 + Angular 20 + Capacitor 8**
+
+The driver-facing Android app. Drivers sign in with Google, see their assigned delivery route on an interactive Google Map, and report their trip status in real time.
+
+### ✨ Key Features
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+- 🔐 **Google OAuth sign-in** (browser-based redirect via `?app=mobile`)
+- 🗺️ **Live route map** with stop markers color-coded by status (pending / active / delivered)
+- 📏 **Ordered polyline overlay** connecting all stops
+- 🎯 **Trip status panel**: **Start** → **Arrived** → **Delivered** buttons with optimistic UI
+
+</td>
+<td width="50%" valign="top">
+
+- 📡 **Socket.io updates** via `vehicle:<id>` room
+- 🔔 **Firebase Cloud Messaging** push notifications for route updates
+- 💪 **Offline-resilient** login and route loading
+- ⚙️ **Capacitor plugins**: geolocation, push, preferences, browser, app
+
+</td>
+</tr>
+</table>
+
+### 🛣️ Trip Status Flow
+
+```
+[not started] ──Start──► [in_transit] ──Arrived──► [at_stop] ──Delivered──► advances to next stop
+                                                                                  ▲
+                                                                                  └── emits vehicle:status
+                                                                                      to fleet room
+```
+
+### 📂 Screens / Routes
 
 | Path | Component | Description |
-|------|-----------|-------------|
+|---|---|---|
 | `/login` | `LoginPage` | Google sign-in with error handling |
 | `/route` | `RoutePage` | Live map + stop list + status buttons |
 | `/auth/callback` | `AuthCallbackComponent` | Handles OAuth redirect, stores JWT |
 
-**Trip status flow:**
-
-```text
-[not started] ──Start──► [in_transit] ──Arrived──► [at_stop] ──Delivered──► advances to next stop
-```
-
-Each status change emits a `vehicle:status` event to the realtime server, which forwards it to the fleet room for dispatchers.
-
-**Android build:**
+### 🤖 Android Build
 
 ```bash
 cd apps/mobile
 npm run build:android   # ng build + cap sync
-npx cap open android    # open in Android Studio
+npx cap open android    # open in Android Studio → run on device
 ```
 
-APK output: `apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk`
+📦 **APK output:** `apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk`
 
-Capacitor plugins: `@capacitor/geolocation` · `@capacitor/push-notifications` · `@capacitor/preferences` · `@capacitor/browser` · `@capacitor/app`
+<details>
+<summary><b>Capacitor plugin list</b></summary>
+
+<br/>
+
+- `@capacitor/geolocation` — GPS tracking
+- `@capacitor/push-notifications` — Firebase FCM integration
+- `@capacitor/preferences` — Native key-value storage for JWT
+- `@capacitor/browser` — OAuth redirect browser
+- `@capacitor/app` — Deep links + lifecycle
+
+</details>
 
 ---
 
-### Web Admin — Dispatcher Dashboard
+<!-- =================================================================== -->
+<!--                       APP DETAILS: WEB ADMIN                         -->
+<!-- =================================================================== -->
 
-> `apps/web-admin` · `@logiflow/web-admin` · Angular 20 + Ionic 8
+## 🖥️ Web Admin — Dispatcher
 
-The dispatcher-facing web dashboard. Admins sign in with Google and monitor the entire fleet in real time.
+> `apps/web-admin` · `@logiflow/web-admin` · **Angular 20 + Ionic 8**
 
-**Key features:**
+The dispatcher-facing web dashboard. Admins sign in with Google and monitor the entire fleet in real time on an interactive Google Map.
 
-- Google OAuth sign-in (redirect via `?app=admin`)
-- **Dashboard view:** live Google Maps with vehicle markers (directional cyan arrows), route polylines, vehicle info windows; sidebar with vehicle cards and color-coded event log
-- **Fleet view:** full vehicle roster with status, plate, model, capacity, and position; click any vehicle to see its active route steps
-- **Alerts view:** real-time alert feed from the event log
-- Vehicle markers: cyan (`#00e5ff`) = online · red (`#ff1744`) = offline · 15-second offline grace timer
-- Route polylines follow streets via Google Directions API with straight-line fallback
-- Route toast: auto-dismissing 6-second notification on new route received
-- Profile menu: user avatar, name, email, role, and logout
-- Connection status indicator with reconnect button
+### ✨ Three Views in One Dashboard
 
-**Screens / routes:**
+<table>
+<tr>
+<td width="33%" align="center" valign="top">
+
+#### 📊 Dashboard
+
+Live Google Map with directional vehicle arrows · Route polylines via Google Directions API · Color-coded event log · Vehicle detail panel
+
+</td>
+<td width="33%" align="center" valign="top">
+
+#### 🚛 Fleet
+
+Full vehicle roster · Status, plate, model, capacity, position · Click vehicle to see active route steps
+
+</td>
+<td width="33%" align="center" valign="top">
+
+#### 🚨 Alerts
+
+Real-time alert feed from the event log · Color-coded by severity · Auto-scroll
+
+</td>
+</tr>
+</table>
+
+### 🎨 Visual Indicators
+
+| Visual cue | Meaning |
+|:---:|:---|
+| 🔵 **Cyan arrow** (`#00e5ff`) | Vehicle online, direction = bearing |
+| 🔴 **Red arrow** (`#ff1744`) | Vehicle offline (15s grace timer) |
+| 🟠 **Orange polyline** (`#ff6b35`) | Active route from Google Directions API |
+| 💫 **6s toast notification** | New route received for any vehicle |
+| 🔗 **Status indicator** | Connection status with reconnect button |
+
+### 📂 Screens / Routes
 
 | Path | Component | Guard | Description |
-|------|-----------|-------|-------------|
+|---|---|---|---|
 | `/login` | `LoginPage` | None | Google sign-in |
 | `/auth/callback` | `AuthCallbackComponent` | None | OAuth redirect handler |
 | `/home` | `HomePage` | `AuthGuard` (role: admin) | Full dashboard |
 
-**Deploy target:** Azure Blob Storage static website —
-`https://logiflowapp.z13.web.core.windows.net`
+### 🌐 Live in Production
 
-**Local dev:**
+**Deploy target:** Azure Blob Storage Static Website
+👉 [**https://logiflowapp.z13.web.core.windows.net**](https://logiflowapp.z13.web.core.windows.net)
+
+### 💻 Local Development
 
 ```bash
 cd apps/web-admin
 npm start
-# http://localhost:4200
+# → http://localhost:4200
 ```
 
 ---
 
-## Shared Libraries
+<!-- =================================================================== -->
+<!--                         SHARED LIBRARIES                             -->
+<!-- =================================================================== -->
 
-Four typed libraries under `shared/` consumed by both apps via npm workspace paths.
+## 📦 Shared Libraries
 
-### `@logiflow/shared-models`
+Four typed TypeScript libraries under [`shared/`](shared/) consumed by both apps via npm workspace paths. **One contract, two consumers, zero duplication.**
 
-TypeScript interfaces and constants shared across the entire platform.
+<details>
+<summary><b>📐 @logiflow/shared-models — Domain types and event constants</b></summary>
+
+<br/>
 
 ```typescript
 // Route step statuses
@@ -148,51 +390,76 @@ ROUTE_STEP_STATUS.Completed // 'completed'
 SOCKET_EVENTS.RouteUpdate      // 'route:update'
 SOCKET_EVENTS.VehiclePosition  // 'vehicle:position'
 SOCKET_EVENTS.VehicleOffline   // 'vehicle:offline'
+SOCKET_EVENTS.VehicleOnline    // 'vehicle:online'
 ```
 
-Key interfaces: `Vehicle` · `Stop` · `DriverRoute` · `RouteStep` · `VehiclePositionEvent` · `RouteUpdateEvent` · `VehicleStatusEvent` · `JoinRoomAck`
+**Key interfaces:** `Vehicle` · `Stop` · `DriverRoute` · `RouteStep` · `VehiclePositionEvent` · `RouteUpdateEvent` · `VehicleStatusEvent` · `JoinRoomAck`
 
-### `@logiflow/shared-socket`
+</details>
 
-`LogiFlowSocketService` — typed socket.io-client wrapper.
+<details>
+<summary><b>📡 @logiflow/shared-socket — Typed Socket.io client wrapper</b></summary>
+
+<br/>
 
 ```typescript
 const socket = new LogiFlowSocketService({ url, auth: { token } });
 await socket.connect();
 socket.joinFleet();
-socket.onRouteUpdate().subscribe(data => { /* ... */ });
-socket.onVehiclePosition().subscribe(data => { /* ... */ });
+
+socket.onRouteUpdate().subscribe(data => {
+  console.log(`Route updated for ${data.vehicleId}`);
+});
+
+socket.onVehiclePosition().subscribe(data => {
+  console.log(`Vehicle ${data.vehicleId} at ${data.lat}, ${data.lng}`);
+});
 ```
 
-Reconnect config: 10 attempts · 2s delay. Exports all event/room constants.
+**Reconnect config:** 10 attempts · 2s delay between attempts.
 
-### `@logiflow/shared-auth`
+</details>
 
-`AuthTokenService` — JWT storage and decoding.
+<details>
+<summary><b>🔐 @logiflow/shared-auth — JWT storage & decoding</b></summary>
+
+<br/>
 
 ```typescript
+// Uses localStorage (web) or Capacitor Preferences (native)
 authToken.setToken(jwt);
 authToken.decodeClaims();   // → { sub, email, role, vehicleId, ... }
 authToken.isExpired();
 authToken.clearToken();
 ```
 
-Storage key: `logiflow.auth.token` (localStorage on web, Capacitor Preferences on native).
+**Storage key:** `logiflow.auth.token`
 
-### `@logiflow/shared-maps`
+</details>
 
-Angular injectable `MapsService` — Google Maps loader and geo utilities.
+<details>
+<summary><b>🗺️ @logiflow/shared-maps — Google Maps loader + geo utilities</b></summary>
+
+<br/>
 
 ```typescript
+// Angular injectable service
 await mapsService.loadGoogleMapsApi(apiKey);
 const map = mapsService.createMap(element, options);
 
+// Pure utility functions
 haversineDistanceKm(pointA, pointB);
 totalPolylineDistanceKm(points);
 toGoogleLatLngLiteral(coordinates);
 ```
 
+</details>
+
 ---
+
+<!-- =================================================================== -->
+<!--                          QUICK START                                 -->
+<!-- =================================================================== -->
 
 ## Quick Start
 
@@ -200,31 +467,44 @@ toGoogleLatLngLiteral(coordinates);
 
 - Node.js 20+
 - A running [LogiFlow backend](https://github.com/Logiflow-Gavilanes-ECI/logiflow) (or use the live API)
-- Google Maps API key (for map features)
+- Google Maps API key
 
 ### Install
 
 ```bash
 git clone https://github.com/Logiflow-Gavilanes-ECI/logiflow-front.git
 cd logiflow-front
-npm install   # installs all workspaces
+npm install   # installs all npm workspaces
 ```
 
-### Run web-admin
+### Run apps
+
+<table>
+<tr>
+<td width="50%">
+
+**🖥️ Web Admin**
 
 ```bash
 cd apps/web-admin
 npm start
-# http://localhost:4200
+# → http://localhost:4200
 ```
 
-### Run mobile (browser preview)
+</td>
+<td width="50%">
+
+**📱 Mobile (browser preview)**
 
 ```bash
 cd apps/mobile
 npm start
-# http://localhost:8100
+# → http://localhost:8100
 ```
+
+</td>
+</tr>
+</table>
 
 ### Typecheck all packages
 
@@ -235,124 +515,288 @@ npm run typecheck
 
 ---
 
+<!-- =================================================================== -->
+<!--                     ENVIRONMENT VARIABLES                            -->
+<!-- =================================================================== -->
+
 ## Environment Variables
 
-### Mobile (`apps/mobile/src/environments/environment.ts`)
+<details>
+<summary><b>📱 Mobile (apps/mobile/src/environments/environment.ts)</b></summary>
+
+<br/>
 
 | Variable | Dev default | Description |
-|----------|-------------|-------------|
+|---|---|---|
 | `apiBaseUrl` | `http://localhost:3002/api/v1` | Gateway REST API base |
 | `socketUrl` | `http://localhost:3001` | Realtime Socket.io URL |
 | `googleMapsApiKey` | `''` | Google Maps JavaScript API key |
 | `adminAppUrl` | `http://localhost:4200` | Web admin URL (redirect for admin-role users) |
 
-> `environment.prod.ts` is not committed. Create it manually or inject via CI. The `android/app/google-services.json` (Firebase) is also excluded from the repo.
+> `environment.prod.ts` is not committed. Create manually or inject via CI. Same for `android/app/google-services.json` (Firebase).
 
-### Web Admin (`apps/web-admin`)
+</details>
+
+<details>
+<summary><b>🖥️ Web Admin (apps/web-admin)</b></summary>
+
+<br/>
 
 Injected at build time by `set-env.js` from OS environment variables:
 
 | OS variable | Build target | Description |
-|-------------|-------------|-------------|
+|---|---|---|
 | `API_URL` | `environment.apiUrl` | Gateway REST base URL |
 | `REALTIME_URL` | `environment.realtimeUrl` | Socket.io URL |
 | `GOOGLE_MAPS_API_KEY` | `environment.googleMapsApiKey` | Google Maps key |
 | `DRIVER_APP_URL` | `environment.driverAppUrl` | Driver app URL (empty in prod — APK) |
 
-**Production values (set in CI):**
+**Production values (set in CI secrets):**
 
-```text
+```
 API_URL        = https://logiflow-api.eastus2.cloudapp.azure.com/api/v1
 REALTIME_URL   = https://logiflow-api.eastus2.cloudapp.azure.com
-DRIVER_APP_URL = (empty — driver app is an Android APK, not a URL)
+DRIVER_APP_URL = (empty — driver app is an Android APK)
 ```
+
+</details>
 
 ---
 
+<!-- =================================================================== -->
+<!--                              CI/CD                                   -->
+<!-- =================================================================== -->
+
 ## CI/CD
 
-### Continuous Integration
+### 🤖 Continuous Integration
 
-Runs on every push and PR to `main`, `develop`, `feat/**`, `fix/**`.
+Runs on every push and PR to `main`, `develop`, `feat/**`, `fix/**`:
 
-```text
-npm ci (root)
-  ├── npm run typecheck      tsc -b across all apps + shared libs
-  └── npm run lint -w @logiflow/web-admin
+```
+┌─────────────┐
+│  npm ci     │  ── workspace-aware install
+└──────┬──────┘
+       │
+   ┌───┴────┬──────────┐
+   ▼        ▼          ▼
+typecheck   lint       (no tests in CI yet)
+   │      web-admin
+   │       only
 ```
 
 > Mobile lint is not yet wired into CI. Web-admin uses Angular ESLint.
 
-### Continuous Deployment — Web Admin
+### 🚀 Continuous Deployment — Web Admin
 
-Triggers automatically on every merge to `main` after CI passes.
+Triggers automatically on every merge to `main` after CI passes:
 
-```text
-npm ci
-  └── npm run build --configuration=production   (apps/web-admin)
-      └── set-env.js injects API_URL, REALTIME_URL, GOOGLE_MAPS_API_KEY
-  └── az storage blob upload-batch → Azure $web container
-  └── index.html cache-control: no-cache, no-store, must-revalidate
+```
+Merge → CI green → npm run build (prod) ────► set-env.js injects API_URL, REALTIME_URL, GMAPS_KEY
+                                                       │
+                                                       ▼
+                              ┌─────────────────────────────────────────────────┐
+                              │  az storage blob upload-batch → Azure $web      │
+                              │  cache-control: no-cache on index.html          │
+                              └─────────────────────────────────────────────────┘
+                                                       │
+                                                       ▼
+                              🌍 https://logiflowapp.z13.web.core.windows.net
 ```
 
 **Required GitHub secrets:** `GOOGLE_MAPS_API_KEY` · `AZURE_STORAGE_ACCOUNT_NAME` · `AZURE_STORAGE_ACCOUNT_KEY`
 
-> The mobile app has no automated deploy pipeline. APKs are built and distributed manually via Android Studio.
+> The mobile app has **no automated deploy pipeline**. APKs are built locally and distributed via Android Studio.
 
 ---
 
+<!-- =================================================================== -->
+<!--                        QUALITY METRICS                               -->
+<!-- =================================================================== -->
+
+## Quality Metrics
+
+<table>
+<tr>
+<td width="33%" align="center" valign="top">
+
+### 🧪 Test Coverage
+
+**80.49 %**
+
+260 / 323 statements
+
+109 tests · 0 fails
+
+`Karma + Istanbul`
+
+</td>
+<td width="33%" align="center" valign="top">
+
+### 🛡️ Auth Flow
+
+**0 LOC**
+
+Email/password code
+
+Google OAuth only
+
+`?app=admin|mobile|web`
+
+</td>
+<td width="33%" align="center" valign="top">
+
+### 📐 Type Safety
+
+**100 %**
+
+Strict TypeScript
+
+Shared interfaces in `shared/models`
+
+`tsc -b` across workspaces
+
+</td>
+</tr>
+</table>
+
+---
+
+<!-- =================================================================== -->
+<!--                       PROJECT STRUCTURE                              -->
+<!-- =================================================================== -->
+
 ## Project Structure
 
-```text
+```
 logiflow-front/
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml                    Typecheck + lint on every push/PR
-│       └── deploy-web-admin.yml      Build + deploy to Azure on main
+│       ├── ci.yml                    🤖 Typecheck + lint on every push/PR
+│       └── deploy-web-admin.yml      🚀 Build + deploy to Azure on main
 ├── apps/
-│   ├── mobile/                       Ionic + Angular + Capacitor driver app
-│   │   ├── android/                  Native Android project (Capacitor-managed)
+│   ├── mobile/                       📱 Ionic + Angular + Capacitor driver app
+│   │   ├── android/                  Native Android project (Capacitor)
 │   │   ├── src/app/
 │   │   │   ├── auth-callback/        OAuth redirect handler
-│   │   │   ├── core/                 Services, constants, runtime config
-│   │   │   ├── login/                Login page (Google OAuth)
+│   │   │   ├── core/                 Services, constants, runtime
+│   │   │   ├── login/                Google sign-in page
 │   │   │   ├── route/                Active route map + stop list
 │   │   │   └── shared/components/    TripStatusComponent
 │   │   └── capacitor.config.ts
-│   └── web-admin/                    Angular dispatcher dashboard
+│   └── web-admin/                    🖥️ Angular dispatcher dashboard
 │       ├── src/app/
 │       │   ├── auth-callback/        OAuth redirect handler
 │       │   ├── core/                 Services, guards, models
-│       │   ├── event-log/            Real-time event stream component
-│       │   ├── home/                 Dashboard shell (dashboard / fleet / alerts views)
-│       │   ├── login/                Login page (Google OAuth)
+│       │   ├── event-log/            Real-time event stream
+│       │   ├── home/                 Dashboard shell (3 views)
+│       │   ├── login/                Google sign-in page
 │       │   ├── map/                  Google Maps component
-│       │   └── vehicle-list/         Fleet sidebar component
-│       └── set-env.js                Build-time env injection script
+│       │   └── vehicle-list/         Fleet sidebar
+│       └── set-env.js                Build-time env injection
 ├── shared/
-│   ├── auth/                         AuthTokenService + JWT utilities
-│   ├── maps/                         MapsService + haversine geo utilities
-│   ├── models/                       Shared TypeScript interfaces + constants
-│   └── socket/                       LogiFlowSocketService wrapper
-├── tsconfig.base.json                Path aliases for all shared libs
+│   ├── auth/                         🔐 AuthTokenService + JWT utilities
+│   ├── maps/                         🗺️ MapsService + geo utilities
+│   ├── models/                       📐 Shared TS interfaces + constants
+│   └── socket/                       📡 LogiFlowSocketService wrapper
+├── tsconfig.base.json                Path aliases for shared libs
 └── package.json                      npm workspaces root
 ```
 
 ---
 
-## Team
+<!-- =================================================================== -->
+<!--                          DOCUMENTATION                               -->
+<!-- =================================================================== -->
 
-**Los Gavilanes del Codigo — ARSW, Escuela Colombiana de Ingenieria Julio Garavito**
+## Documentation
 
-| Name | Handle | Area |
-|------|--------|------|
-| **Andersson David Sanchez Mendez** | [@AnderssonProgramming](https://github.com/AnderssonProgramming) | Architecture, CI/CD, infra |
-| **Cristian Santiago Pedraza Rodriguez** | [@cris-eci](https://github.com/cris-eci) | Maps, route visualization |
-| **Elizabeth Correa Suarez** | [@Eliza-05](https://github.com/Eliza-05) | Mobile app, Capacitor |
-| **Juan Sebastian Ortega Munoz** | [@Juanseom](https://github.com/Juanseom) | Web admin, socket integration |
+Architecture deliverables live in the [**backend repository**](https://github.com/Logiflow-Gavilanes-ECI/logiflow) under `docs/`:
+
+<table>
+<tr>
+<th align="left">📄 Deliverable</th>
+<th align="left">Link</th>
+</tr>
+<tr>
+<td>📘 <b>Architecture Document</b></td>
+<td><a href="https://github.com/Logiflow-Gavilanes-ECI/logiflow/blob/main/docs/LogiFlow-architecture.pdf">LogiFlow-architecture.pdf</a> · 40 pages</td>
+</tr>
+<tr>
+<td>📰 <b>IEEE Article</b></td>
+<td><a href="https://github.com/Logiflow-Gavilanes-ECI/logiflow/blob/main/docs/LogiFlow-article.pdf">LogiFlow-article.pdf</a> · 5 pages, IEEEtran format</td>
+</tr>
+<tr>
+<td>📊 <b>Defense Slides</b></td>
+<td><a href="https://github.com/Logiflow-Gavilanes-ECI/logiflow/blob/main/docs/LogiFlow-presentation.pptx">LogiFlow-presentation.pptx</a> · 18 slides</td>
+</tr>
+<tr>
+<td>🎨 <b>UML Diagrams</b></td>
+<td><a href="https://github.com/Logiflow-Gavilanes-ECI/logiflow/tree/main/docs/diagrams">docs/diagrams/</a> · 7 × PNG (Context, Components, ER, Sequence, Class, Deployment, Activity)</td>
+</tr>
+</table>
 
 ---
 
+<!-- =================================================================== -->
+<!--                              TEAM                                    -->
+<!-- =================================================================== -->
+
+## Team — Los Gavilanes del Código
+
+<table>
+<tr>
+<td align="center" width="25%">
+  <a href="https://github.com/AnderssonProgramming">
+    <img src="https://github.com/AnderssonProgramming.png" width="100" style="border-radius:50%"/><br/>
+    <sub><b>Andersson David<br/>Sánchez Méndez</b></sub>
+  </a><br/>
+  <sub>🏗️ Architecture · CI/CD</sub>
+</td>
+<td align="center" width="25%">
+  <a href="https://github.com/cris-eci">
+    <img src="https://github.com/cris-eci.png" width="100" style="border-radius:50%"/><br/>
+    <sub><b>Cristian Santiago<br/>Pedraza Rodríguez</b></sub>
+  </a><br/>
+  <sub>🗺️ Maps · Route Visualization</sub>
+</td>
+<td align="center" width="25%">
+  <a href="https://github.com/Eliza-05">
+    <img src="https://github.com/Eliza-05.png" width="100" style="border-radius:50%"/><br/>
+    <sub><b>Elizabeth<br/>Correa Suárez</b></sub>
+  </a><br/>
+  <sub>📱 Mobile · Capacitor</sub>
+</td>
+<td align="center" width="25%">
+  <a href="https://github.com/Juanseom">
+    <img src="https://github.com/Juanseom.png" width="100" style="border-radius:50%"/><br/>
+    <sub><b>Juan Sebastián<br/>Ortega Muñoz</b></sub>
+  </a><br/>
+  <sub>🖥️ Web Admin · Sockets</sub>
+</td>
+</tr>
+</table>
+
+<div align="center">
+  <sub><b>Arquitecturas de Software (ARSW) · Escuela Colombiana de Ingenieria Julio Garavito · Mayo 2026</b></sub>
+</div>
+
+---
+
+<!-- =================================================================== -->
+<!--                            LICENSE                                   -->
+<!-- =================================================================== -->
+
 ## License
 
+<div align="center">
+
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
 MIT © 2026 LogiFlow — Escuela Colombiana de Ingenieria Julio Garavito
+
+<br/>
+
+<sub>Crafted with ⚡ Angular signals, 🗺️ Google Maps love, and 📱 Capacitor magic by Los Gavilanes del Código</sub>
+
+</div>
